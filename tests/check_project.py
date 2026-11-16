@@ -24,4 +24,9 @@ if "erase_flash" in flash:
 if "AMH_BOARD_CONFIRMED" not in flash or '== "FLASH"' not in flash:
     raise SystemExit("Flash script must have board and typed-confirmation gates.")
 
+config = (root / "scripts/configure.sh").read_text()
+for option in ("CONFIG_BUILTIN", "CONFIG_NSH_BUILTIN_APPS", "CONFIG_SCHED_WAITPID"):
+    if option not in config:
+        raise SystemExit("Missing NuttX built-in application option " + option)
+
 print("AMH-OS project structure sanity check passed.")
