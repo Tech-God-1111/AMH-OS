@@ -1,0 +1,11 @@
+third_party/
+build/
+*.o
+*.a
+*.elf
+*.bin
+*.hex
+*.map
+.config
+.config.old
+include/nuttx/config.h
