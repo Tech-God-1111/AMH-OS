@@ -5,7 +5,7 @@ NUTTX="$ROOT/third_party/nuttx"
 APPS="$ROOT/third_party/apps"
 APP_DST="$APPS/examples/amh"
 if [[ ! -x "$NUTTX/tools/configure.sh" || ! -d "$APPS/examples" ]]; then
-  echo "Run ./scripts/bootstrap.sh first." >&2
+  echo "Run bash scripts/bootstrap.sh first." >&2
   exit 1
 fi
 mkdir -p "$APP_DST"
@@ -17,7 +17,7 @@ grep -q 'examples/amh/Make.defs' "$APPS/examples/Make.defs" || printf '\ninclude
 cd "$NUTTX"
 ./tools/configure.sh esp32s3-devkit:nsh
 grep -q '^CONFIG_EXAMPLES_AMH=y$' .config || printf '\nCONFIG_EXAMPLES_AMH=y\n' >> .config
-grep -q '^CONFIG_MM_MALLINFO=y$' .config || printf 'CONFIG_MM_MALLINFO=y\n' >> .config
 echo "Configured esp32s3-devkit:nsh with AMH app."
+echo "Heap statistics are optional and depend on the selected NuttX memory API/config."
 echo "Wi-Fi driver and WAPI options must be enabled manually in make menuconfig."
 echo "Review flash settings before building or flashing."
