@@ -29,4 +29,9 @@ for option in ("CONFIG_BUILTIN", "CONFIG_NSH_BUILTIN_APPS", "CONFIG_SCHED_WAITPI
     if option not in config:
         raise SystemExit("Missing NuttX built-in application option " + option)
 
+app_make = (root / "apps/amh/Makefile").read_text()
+for setting in ("PROGNAME", "PRIORITY", "STACKSIZE", "MODULE"):
+    if setting not in app_make:
+        raise SystemExit("Missing NuttX app build setting " + setting)
+
 print("AMH-OS project structure sanity check passed.")
