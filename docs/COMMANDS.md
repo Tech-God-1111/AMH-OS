@@ -11,6 +11,10 @@ Commands are entered at the NuttX NSH prompt.
 | amh apps | List utilities allowed by the AMH launcher |
 | amh run <utility> [args] | Launch a utility from the fixed allow-list |
 
+## Wi-Fi hardware compatibility
+
+ESP32-S3 supports 2.4 GHz Wi-Fi only (IEEE 802.11 b/g/n). Use a 2.4 GHz access point. A 5 GHz-only network cannot be used.
+
 ## Wi-Fi workflow
 
 The ESP32-S3 Wi-Fi driver, network stack and WAPI tools must be enabled in the selected NuttX configuration. The AMH launcher passes arguments directly to an executable; it does not invoke a shell to parse user-provided strings.
