@@ -43,7 +43,7 @@ static void show_system(void)
     printf("Heap arena       : %d bytes\n", mi.arena);
   }
 #else
-  printf("Heap statistics  : enable CONFIG_MM_MALLINFO\n");
+  printf("Heap statistics  : use NuttX 'free' command if enabled\n");
 #endif
   printf("External PSRAM   : not exposed by generic board profile\n");
   printf("CPU utilization : requires board-specific scheduler telemetry\n\n");
@@ -60,6 +60,7 @@ static void show_wifi(void)
   printf("  wapi essid wlan0 <ssid> 1\n");
   printf("  renew wlan0\n");
   printf("  ifconfig wlan0\n");
+  printf("Or use: amh run ifconfig wlan0\n");
   printf("Never commit real Wi-Fi credentials to source control.\n\n");
 }
 
@@ -101,7 +102,7 @@ static int allowed_app(const char *name)
 {
   static const char *const apps[] = {
     "uname", "ps", "free", "ls", "df", "ifconfig", "wapi",
-    "ping", "mount", "umount", "date", "uptime", NULL
+    "renew", "ping", "mount", "umount", "date", "uptime", NULL
   };
   int i;
   for (i = 0; apps[i]; i++)
@@ -112,7 +113,7 @@ static int allowed_app(const char *name)
 static void show_apps(void)
 {
   printf("\nAMH-OS native utility allow-list\n");
-  printf("uname ps free ls df ifconfig wapi ping mount umount date uptime\n");
+  printf("uname ps free ls df ifconfig wapi renew ping mount umount date uptime\n");
   printf("Launch: amh run <utility> [arguments]\n");
   printf("Availability depends on the NuttX build configuration.\n\n");
 }
