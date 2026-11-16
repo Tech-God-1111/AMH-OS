@@ -6,6 +6,7 @@
 - 16 MB flash detected by Arduino diagnostic.
 - Approximately 8 MB usable PSRAM detected by Arduino diagnostic.
 - Two USB-C connectors labelled COM/UART and USB; COM/UART used for serial upload/monitor.
+- Wi-Fi is **2.4 GHz only**, IEEE 802.11 b/g/n. 5 GHz Wi-Fi is not supported by ESP32-S3.
 
 The exact carrier-board manufacturer/model and USB bridge are not confirmed.
 
