@@ -2,10 +2,14 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 NUTTX="$ROOT/third_party/nuttx"
-PORT="$1"
-if [[ -z "$PORT" || ! -f "$NUTTX/nuttx" ]]; then
-  echo "Usage: ./scripts/flash.sh /dev/ttyUSB0 (build firmware first)" >&2
+if [[ $# -lt 1 ]]; then
+  echo "Usage: bash scripts/flash.sh /dev/ttyUSB0" >&2
   exit 2
+fi
+PORT="$1"
+if [[ ! -f "$NUTTX/nuttx" ]]; then
+  echo "Firmware ELF not found. Run the build first." >&2
+  exit 1
 fi
 echo "WARNING: this replaces the firmware currently on $PORT."
 echo "No full-chip erase is requested. Confirm board, port and flash settings."
