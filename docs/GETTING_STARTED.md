@@ -19,13 +19,13 @@ Install the Espressif Xtensa ESP32-S3 toolchain required by the NuttX revision. 
 
 ## 3. Download upstream sources
 ```bash
-./scripts/bootstrap.sh
+bash scripts/bootstrap.sh
 ```
 
 ## 4. Configure and build
 ```bash
-./scripts/configure.sh
-./scripts/build.sh
+bash scripts/configure.sh
+bash scripts/build.sh
 ```
 
 The baseline is `esp32s3-devkit:nsh`. The script registers and enables the AMH app. For Wi-Fi, run `make menuconfig` inside `third_party/nuttx` and enable the ESP32-S3 Wi-Fi driver, network initialization and WAPI options supported by that exact NuttX revision. Save and rebuild. Unsupported Kconfig symbols are not guessed.
@@ -33,14 +33,14 @@ The baseline is `esp32s3-devkit:nsh`. The script registers and enables the AMH a
 ## 5. Serial console
 Connect the COM/UART USB connector. Under WSL2, USB serial devices may need USBIPD forwarding; alternatively build in WSL2 and flash from Windows. Linux serial example:
 ```bash
-./scripts/serial.sh /dev/ttyUSB0
+bash scripts/serial.sh /dev/ttyUSB0
 ```
 Use 115200 baud. Expected prompt: `nsh>`. Try `help`, `uname -a`, `amh help`, `amh sys`, `amh fs`, and `amh apps`.
 
 ## 6. Flash only after hardware review
 Confirm the carrier-board model, flash size, PSRAM support and serial port. The profile is provisional until the exact board is identified.
 ```bash
-./scripts/flash.sh /dev/ttyUSB0
+bash scripts/flash.sh /dev/ttyUSB0
 ```
 The script asks for explicit confirmation. Do not enable secure boot or flash-encryption eFuses in this development project.
 
