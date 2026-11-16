@@ -1,5 +1,3 @@
-CSRCS += amh_main.c
-PROGNAME = amh
-PRIORITY = 100
-STACKSIZE = 4096
-MODULE = $(CONFIG_EXAMPLES_AMH)
+ifneq ($(CONFIG_EXAMPLES_AMH),)
+CONFIGURED_APPS += $(APPDIR)/examples/amh
+endif
