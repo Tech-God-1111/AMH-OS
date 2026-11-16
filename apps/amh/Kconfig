@@ -5,3 +5,18 @@ config EXAMPLES_AMH
 	---help---
 		Build the AMH-OS user-space command suite. Available at the NSH prompt:
 		  nsh> amh help
+
+config EXAMPLES_AMH_PROGNAME
+	string "AMH-OS program name"
+	default "amh"
+	depends on EXAMPLES_AMH
+
+config EXAMPLES_AMH_PRIORITY
+	int "AMH-OS task priority"
+	default 100
+	depends on EXAMPLES_AMH
+
+config EXAMPLES_AMH_STACKSIZE
+	int "AMH-OS task stack size"
+	default 4096
+	depends on EXAMPLES_AMH
