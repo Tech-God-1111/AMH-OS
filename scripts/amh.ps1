@@ -77,7 +77,7 @@ switch ($Command) {
         New-Item -ItemType Directory -Force -Path $downloadDir | Out-Null
         New-Item -ItemType Directory -Force -Path $ToolchainRoot | Out-Null
 
-        if (-not (Test-Path (Join-Path $ToolchainBin "xtensa-esp-elf-gcc.exe"))) {
+        if (-not (Get-ChildItem -Path $ToolchainRoot -Filter "xtensa-esp-elf-gcc.exe" -File -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1)) {
             Write-Host "Downloading Espressif Xtensa ESP32-S3 Windows toolchain..."
             Invoke-WebRequest -Uri $url -OutFile $archive
             $actual = (Get-FileHash -Algorithm SHA256 $archive).Hash.ToLowerInvariant()
