@@ -1,0 +1,5 @@
+config EXAMPLES_AMH
+	bool "AMH-OS command utility"
+	default n
+	---help---
+		Build the AMH-OS NSH command utility.
