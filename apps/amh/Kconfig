@@ -1,5 +1,7 @@
 config EXAMPLES_AMH
-	bool "AMH-OS command utility"
-	default n
+	bool "AMH-OS command suite"
+	default y
+	depends on NSH_LIBRARY
 	---help---
-		Build the AMH-OS NSH command utility.
+		Build the AMH-OS user-space command suite. Available at the NSH prompt:
+		  nsh> amh help
