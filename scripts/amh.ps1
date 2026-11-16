@@ -12,6 +12,8 @@ $ErrorActionPreference = "Stop"
 $Root = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $ToolchainRoot = Join-Path $Root "tools\xtensa-esp-elf"
 $ToolchainBin = Join-Path $ToolchainRoot "bin"
+$ExistingCompiler = Get-ChildItem -Path $ToolchainRoot -Filter "xtensa-esp-elf-gcc.exe" -File -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+if ($ExistingCompiler) { $ToolchainBin = $ExistingCompiler.Directory.FullName }
 $VenvPython = Join-Path $Root ".venv-windows\Scripts\python.exe"
 $Bash = if ($env:CYGWIN_BASH) { $env:CYGWIN_BASH } else { "C:\cygwin64\bin\bash.exe" }
 
@@ -55,7 +57,8 @@ function Invoke-Cygwin([string]$BashCommand) {
     }
     $cygRoot = (& $cygpath -u $Root).Trim()
     if ($LASTEXITCODE -ne 0 -or -not $cygRoot) { throw "Could not convert project path for Cygwin." }
-    $env:PATH = "$ToolchainBin;$env:PATH"
+    $pythonScripts = Join-Path $Root ".venv-windows\\Scripts"
+    $env:PATH = "$ToolchainBin;$pythonScripts;$env:PATH"
     & $bashPath -lc "cd '$cygRoot' && $BashCommand"
     if ($LASTEXITCODE -ne 0) { throw "Cygwin command failed with exit code $LASTEXITCODE." }
 }
