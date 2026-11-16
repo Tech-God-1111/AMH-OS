@@ -17,7 +17,7 @@ grep -q 'examples/amh/Kconfig' "$APPS/examples/Kconfig" || printf '\nsource "exa
 grep -q 'examples/amh/Make.defs' "$APPS/examples/Make.defs" || printf '\ninclude examples/amh/Make.defs\n' >> "$APPS/examples/Make.defs"
 cd "$NUTTX"
 ./tools/configure.sh esp32s3-devkit:nsh
-for option in CONFIG_EXAMPLES_AMH CONFIG_MM_MALLINFO CONFIG_LIBC_EXECFUNCS; do
+for option in CONFIG_EXAMPLES_AMH CONFIG_MM_MALLINFO CONFIG_LIBC_EXECFUNCS CONFIG_BUILTIN CONFIG_NSH_BUILTIN_APPS CONFIG_SCHED_WAITPID; do
   grep -q "^$option=y$" .config || printf '\n%s=y\n' "$option" >> .config
 done
 make olddefconfig
