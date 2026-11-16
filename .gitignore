@@ -9,3 +9,8 @@ build/
 .config
 .config.old
 include/nuttx/config.h
+
+# Local Windows development tools and downloads
+.venv-windows/
+tools/
+downloads/
