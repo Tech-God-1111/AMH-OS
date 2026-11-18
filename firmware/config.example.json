@@ -1,0 +1,7 @@
+{
+  "wifi_ssid": "",
+  "wifi_password": "",
+  "setup_ap_ssid": "AMH-OS-SETUP",
+  "setup_ap_password": "amhsetup1234",
+  "hostname": "amh-os-lite"
+}

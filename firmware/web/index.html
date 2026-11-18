@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101827">
+<title>AMH-OS Lite</title>
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<header class="topbar"><div class="brand"><span class="mark">A</span><div><b>AMH-OS</b><small>Lite device console</small></div></div><div class="status"><i id="dot"></i><span id="connection">Connecting…</span></div></header>
+<main class="shell">
+<section class="hero"><div><p class="eyebrow">ESP32-S3 CONTROL CENTER</p><h1>Your device.<br><span>One local dashboard.</span></h1><p class="sub">A lightweight MicroPython environment running directly on your board.</p></div><span class="chip">● LOCAL SYSTEM</span></section>
+<section class="metrics"><article><small>FREE HEAP</small><b id="heap">—</b><span>bytes available</span></article><article><small>CPU FREQUENCY</small><b id="freq">—</b><span>MHz</span></article><article><small>UPTIME</small><b id="uptime">—</b><span>since application start</span></article></section>
+<section class="grid">
+<article class="panel"><div class="heading"><div><p class="eyebrow">OVERVIEW</p><h2>System status</h2></div><em>LIVE</em></div><dl><div><dt>Device</dt><dd id="device">AMH-OS Lite</dd></div><div><dt>Runtime</dt><dd id="runtime">MicroPython</dd></div><div><dt>Version</dt><dd id="version">—</dd></div><div><dt>Device ID</dt><dd id="deviceid">—</dd></div><div><dt>Network mode</dt><dd id="mode">—</dd></div><div><dt>IP address</dt><dd id="ip">—</dd></div></dl></article>
+<article class="panel"><div class="heading"><div><p class="eyebrow">CONNECTIVITY</p><h2>Wi-Fi settings</h2></div><em>⌁</em></div><form id="wifi-form"><label for="ssid">Network name (SSID)</label><input id="ssid" maxlength="64" required placeholder="Your Wi-Fi network"><label for="password">Network password</label><input id="password" type="password" maxlength="128" placeholder="Wi-Fi password"><button type="submit">Save and connect <span>→</span></button><p id="message" class="muted">Credentials are stored on this device.</p></form></article>
+<article class="panel"><div class="heading"><div><p class="eyebrow">STORAGE</p><h2>Filesystem</h2></div><em class="muted">READ ONLY</em></div><div id="files" class="files">Loading…</div><p class="muted">File editing is disabled in this release.</p></article>
+<article class="panel"><div class="heading"><div><p class="eyebrow">HARDWARE</p><h2>GPIO controls</h2></div><em class="muted">LOCKED</em></div><p class="muted">GPIO outputs are disabled until the exact ESP32-S3 carrier-board pinout is verified. This avoids using board-reserved pins.</p><div class="locked">▣ Output controls unavailable</div></article>
+</section>
+<footer><span>AMH-OS Lite <span id="footerversion">0.1.0</span></span><span>Runs locally on your ESP32-S3</span></footer>
+</main><div id="toast" role="status"></div><script src="/app.js"></script>
+</body></html>

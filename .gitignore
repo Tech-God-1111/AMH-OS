@@ -1,16 +1,11 @@
-third_party/
-build/
-*.o
-*.a
-*.elf
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+firmware/config.json
 *.bin
-*.hex
+*.elf
 *.map
-.config
-.config.old
-include/nuttx/config.h
-
-# Local Windows development tools and downloads
-.venv-windows/
-tools/
-downloads/
+.DS_Store
+Thumbs.db

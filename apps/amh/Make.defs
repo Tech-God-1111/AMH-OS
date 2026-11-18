@@ -1,3 +1,0 @@
-ifneq ($(CONFIG_EXAMPLES_AMH),)
-CONFIGURED_APPS += $(APPDIR)/examples/amh
-endif
