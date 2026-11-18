@@ -1,40 +1,33 @@
 # AMH-OS Lite
 
-A lightweight ESP32-S3 device environment built on the official MicroPython runtime. The board runs the Python system layer and hosts its own HTML/CSS/JavaScript dashboard. No custom kernel, NuttX, Cygwin, Bash, Make, or cross-compiler is needed for application development.
+A lightweight ESP32-S3 device environment built on the official MicroPython runtime. The board runs the Python system layer and can expose a local dashboard or a USB-connected desktop demonstration.
 
-## Foundation features
-- Wi-Fi station connection with first-boot setup access point.
-- Local browser dashboard and JSON API.
-- Device ID, runtime, free heap, uptime, CPU frequency, and network status.
-- Read-only root filesystem listing.
-- Wi-Fi configuration through the dashboard.
-- GPIO API present, but output pins disabled until the exact carrier-board pinout is verified.
-- REPL command helpers: help, sys, wifi, fs, version.
+## Current features
+- MicroPython-based ESP32-S3 system layer.
+- USB serial JSON protocol for the AMH-OS Desktop demo.
+- Browser desktop with lock screen, application launcher, dock and demo windows.
+- Read-only live hardware status over USB: device ID, runtime, free heap, uptime and CPU frequency.
+- Safe demonstration commands: help, version, sys, wifi.
+- Existing Wi-Fi dashboard and JSON API retained in the firmware package.
+- GPIO output remains disabled until the exact carrier-board pinout is verified.
 
-## Layout
-- firmware/boot.py and firmware/main.py: startup.
-- firmware/amh/: system modules and HTTP server.
-- firmware/web/: browser dashboard.
-- tools/: Windows PowerShell deployment and checks.
-- docs/: architecture, setup, commands, security.
+## USB desktop demonstration
+1. Pull the latest repository.
+2. Deploy application files: `.\tools\deploy.ps1 -Port COM16` (replace COM16 with the actual port).
+3. Start the local desktop server: `.\tools\launch-desktop.ps1`.
+4. Open `http://localhost:8765` in current Chrome or Edge.
+5. Click **Connect ESP32 over USB**, select the board's COM port and approve access.
+6. Unlock with demo PIN `1234`.
 
-## Quick start on Windows
-1. Identify the exact ESP32-S3 carrier-board model.
-2. Install official MicroPython ESP32-S3 firmware using board-specific instructions: https://micropython.org/download/ESP32_GENERIC_S3/
-3. Install Python 3 and run: py -m pip install --upgrade mpremote
-4. Clone this repository and open it in PyCharm.
-5. Deploy application files: .\tools\deploy.ps1 -Port COM16 (replace COM16 with the actual port).
-6. If no saved Wi-Fi network is available, connect to the setup AP and open http://192.168.4.1.
+See [USB Desktop Demo](docs/USB_DESKTOP_DEMO.md) for details.
 
-Initial setup AP: SSID AMH-OS-SETUP, password amhsetup1234. Change it before shared use.
+## Foundation setup
+- Official MicroPython firmware: https://micropython.org/download/ESP32_GENERIC_S3/
+- Install tools: `py -m pip install --upgrade mpremote`
+- Run project checks: `.\tools\check.ps1`
 
 ## Important
-This repository contains application files, not a board-specific MicroPython firmware binary. The deploy script only copies application files. It does not erase flash, install firmware, or modify eFuses. Confirm exact board and flash settings before installing firmware.
-
-Run checks with .\tools\check.ps1.
-
-## Status
-Early foundation. File editing, OTA, arbitrary remote commands, GPIO output, and automatic firmware flashing are not enabled in this release.
+This is an embedded device environment and a desktop demonstration, not a general-purpose PC operating system. The desktop runs in the host browser; it does not replace or automatically launch over the host OS. The serial interface exposes a small read-only/allowlisted command set, not arbitrary remote execution. Deployment only copies application files; it does not erase flash or install firmware.
 
 ## License
 MIT.

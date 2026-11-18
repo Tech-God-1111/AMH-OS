@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#081426">
+<title>AMH-OS Desktop</title>
+<link rel="stylesheet" href="css/desktop.css">
+</head>
+<body>
+<div id="lockscreen" class="lockscreen">
+  <div class="lock-card">
+    <div class="brand-mark">A</div>
+    <div class="eyebrow">WELCOME TO</div>
+    <h1>AMH-OS</h1>
+    <p class="muted">A personal computing environment</p>
+    <div id="lock-time" class="lock-time">--:--</div>
+    <label class="pin-label" for="pin">DEMO ACCESS PIN</label>
+    <input id="pin" type="password" inputmode="numeric" maxlength="8" placeholder="Enter PIN" autocomplete="off">
+    <button id="unlock" class="primary wide">Unlock desktop <span>→</span></button>
+    <p id="pin-error" class="error" aria-live="polite">Demo PIN: 1234</p>
+    <div class="lock-foot">AMH-OS DESKTOP DEMONSTRATION</div>
+  </div>
+</div>
+<div id="desktop" class="desktop hidden">
+  <header class="topbar">
+    <div class="top-brand"><span class="mini-mark">A</span> AMH-OS <span class="edition">DESKTOP</span></div>
+    <div class="top-center" id="active-title">Workspace</div>
+    <div class="top-right"><span id="connection-dot" class="dot"></span><span id="connection-label">USB disconnected</span><span id="clock">--:--</span></div>
+  </header>
+  <main class="workspace">
+    <div class="wallpaper-glow"></div>
+    <section class="desktop-icons">
+      <button class="desktop-icon" data-app="computer"><span class="app-icon blue">▣</span><span>Computer</span></button>
+      <button class="desktop-icon" data-app="files"><span class="app-icon amber">▤</span><span>File Manager</span></button>
+      <button class="desktop-icon" data-app="terminal"><span class="app-icon dark">›_</span><span>Terminal</span></button>
+      <button class="desktop-icon" data-app="settings"><span class="app-icon violet">⚙</span><span>Settings</span></button>
+      <button class="desktop-icon" data-app="about"><span class="app-icon teal">ⓘ</span><span>About AMH</span></button>
+    </section>
+    <section id="window-area" class="window-area"></section>
+    <div class="hero-note"><div class="hero-kicker">YOUR DEVICE. YOUR WORKSPACE.</div><h2>Welcome to<br><span>AMH-OS.</span></h2><p>A lightweight desktop experience powered by ESP32-S3.</p><button id="connect-main" class="primary">Connect ESP32 over USB <span>↗</span></button><div class="hero-meta">MICROPYTHON CORE <i></i> USB SERIAL LINK</div></div>
+  </main>
+  <footer class="dock-wrap">
+    <div class="dock">
+      <button class="dock-app home" data-app="menu" title="Applications">A</button>
+      <span class="dock-sep"></span>
+      <button class="dock-app" data-app="computer" title="System">▣</button>
+      <button class="dock-app" data-app="files" title="Files">▤</button>
+      <button class="dock-app" data-app="terminal" title="Terminal">›_</button>
+      <button class="dock-app" data-app="settings" title="Settings">⚙</button>
+      <button class="dock-app" data-app="monitor" title="System monitor">▥</button>
+    </div>
+    <div class="dock-right"><span id="dock-usb" class="dock-status">● OFFLINE</span><button id="lock-again" class="lock-btn" title="Lock screen">◒</button></div>
+  </footer>
+  <div id="menu-panel" class="menu-panel hidden">
+    <div class="menu-heading">AMH-OS <small>APPLICATIONS</small></div>
+    <div class="menu-grid">
+      <button data-app="computer">▣<span>Computer</span></button><button data-app="files">▤<span>Files</span></button>
+      <button data-app="terminal">›_<span>Terminal</span></button><button data-app="monitor">▥<span>Monitor</span></button>
+      <button data-app="settings">⚙<span>Settings</span></button><button data-app="about">ⓘ<span>About</span></button>
+    </div>
+    <div class="menu-bottom"><span>AMH-OS Desktop Demo</span><button id="menu-lock">Lock session</button></div>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+<script src="js/serial.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
