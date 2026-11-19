@@ -7,9 +7,13 @@ FW = ROOT / "firmware"
 
 class ProjectTests(unittest.TestCase):
     def test_required_files(self):
-        for path in ("main.py", "boot.py", "amh/api.py", "amh/config.py",
-                     "amh/wifi.py", "amh/webserver.py", "web/index.html",
-                     "web/app.css", "web/app.js"):
+        required = (
+            "main.py", "boot.py", "amh/api.py", "amh/config.py",
+            "amh/wifi.py", "amh/webserver.py", "amh/fs_service.py",
+            "amh/shell.py", "amh/task_manager.py", "amh/bluetooth.py",
+            "amh/usb_serial.py", "web/index.html", "web/app.css", "web/app.js"
+        )
+        for path in required:
             with self.subTest(path=path):
                 self.assertTrue((FW / path).is_file())
 
@@ -20,6 +24,12 @@ class ProjectTests(unittest.TestCase):
     def test_gpio_disabled_by_default(self):
         source = (FW / "amh" / "hardware.py").read_text(encoding="utf-8")
         self.assertIn("ALLOWED_OUTPUT_PINS = ()", source)
+
+    def test_desktop_has_required_apps(self):
+        source = (ROOT / "desktop" / "index.html").read_text(encoding="utf-8")
+        for app in ("terminal", "files", "monitor", "settings", "browser", "bluetooth"):
+            with self.subTest(app=app):
+                self.assertIn('data-app="' + app + '"', source)
 
 
 if __name__ == "__main__":

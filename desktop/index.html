@@ -15,11 +15,11 @@
     <h1>AMH-OS</h1>
     <p class="muted">A personal computing environment</p>
     <div id="lock-time" class="lock-time">--:--</div>
-    <label class="pin-label" for="pin">DEMO ACCESS PIN</label>
-    <input id="pin" type="password" inputmode="numeric" maxlength="8" placeholder="Enter PIN" autocomplete="off">
+    <label class="pin-label" id="login-label" for="pin">PIN</label>
+    <input id="pin" type="password" inputmode="numeric" maxlength="64" placeholder="Enter PIN" autocomplete="off">
     <button id="unlock" class="primary wide">Unlock desktop <span>→</span></button>
-    <p id="pin-error" class="error" aria-live="polite">Demo PIN: 1234</p>
-    <div class="lock-foot">AMH-OS DESKTOP DEMONSTRATION</div>
+    <p id="pin-error" class="error" aria-live="polite">Default demo PIN: 1234</p>
+    <div class="lock-foot">AMH-OS DESKTOP</div>
   </div>
 </div>
 <div id="desktop" class="desktop hidden">
@@ -32,13 +32,16 @@
     <div class="wallpaper-glow"></div>
     <section class="desktop-icons">
       <button class="desktop-icon" data-app="computer"><span class="app-icon blue">▣</span><span>Computer</span></button>
-      <button class="desktop-icon" data-app="files"><span class="app-icon amber">▤</span><span>File Manager</span></button>
+      <button class="desktop-icon" data-app="files"><span class="app-icon amber">▤</span><span>File Explorer</span></button>
       <button class="desktop-icon" data-app="terminal"><span class="app-icon dark">›_</span><span>Terminal</span></button>
+      <button class="desktop-icon" data-app="monitor"><span class="app-icon teal">▥</span><span>Task Manager</span></button>
       <button class="desktop-icon" data-app="settings"><span class="app-icon violet">⚙</span><span>Settings</span></button>
+      <button class="desktop-icon" data-app="browser"><span class="app-icon blue">◎</span><span>Web Browser</span></button>
+      <button class="desktop-icon" data-app="bluetooth"><span class="app-icon teal">ᛒ</span><span>Bluetooth</span></button>
       <button class="desktop-icon" data-app="about"><span class="app-icon teal">ⓘ</span><span>About AMH</span></button>
     </section>
     <section id="window-area" class="window-area"></section>
-    <div class="hero-note"><div class="hero-kicker">YOUR DEVICE. YOUR WORKSPACE.</div><h2>Welcome to<br><span>AMH-OS.</span></h2><p>A lightweight desktop experience powered by ESP32-S3.</p><button id="connect-main" class="primary">Connect ESP32 over USB <span>↗</span></button><div class="hero-meta">MICROPYTHON CORE <i></i> USB SERIAL LINK</div></div>
+    <div class="hero-note"><div class="hero-kicker">YOUR DEVICE. YOUR WORKSPACE.</div><h2>Welcome to<br><span>AMH-OS.</span></h2><p>ESP32-S3 system core with a host-rendered desktop.</p><button id="connect-main" class="primary">Connect ESP32 over USB <span>↗</span></button><div class="hero-meta">MICROPYTHON CORE <i></i> USB SERIAL LINK</div></div>
   </main>
   <footer class="dock-wrap">
     <div class="dock">
@@ -47,8 +50,9 @@
       <button class="dock-app" data-app="computer" title="System">▣</button>
       <button class="dock-app" data-app="files" title="Files">▤</button>
       <button class="dock-app" data-app="terminal" title="Terminal">›_</button>
+      <button class="dock-app" data-app="monitor" title="Task Manager">▥</button>
       <button class="dock-app" data-app="settings" title="Settings">⚙</button>
-      <button class="dock-app" data-app="monitor" title="System monitor">▥</button>
+      <button class="dock-app" data-app="browser" title="Browser">◎</button>
     </div>
     <div class="dock-right"><span id="dock-usb" class="dock-status">● OFFLINE</span><button id="lock-again" class="lock-btn" title="Lock screen">◒</button></div>
   </footer>
@@ -56,10 +60,11 @@
     <div class="menu-heading">AMH-OS <small>APPLICATIONS</small></div>
     <div class="menu-grid">
       <button data-app="computer">▣<span>Computer</span></button><button data-app="files">▤<span>Files</span></button>
-      <button data-app="terminal">›_<span>Terminal</span></button><button data-app="monitor">▥<span>Monitor</span></button>
-      <button data-app="settings">⚙<span>Settings</span></button><button data-app="about">ⓘ<span>About</span></button>
+      <button data-app="terminal">›_<span>Terminal</span></button><button data-app="monitor">▥<span>Task Manager</span></button>
+      <button data-app="settings">⚙<span>Settings</span></button><button data-app="browser">◎<span>Browser</span></button>
+      <button data-app="bluetooth">ᛒ<span>Bluetooth</span></button><button data-app="about">ⓘ<span>About</span></button>
     </div>
-    <div class="menu-bottom"><span>AMH-OS Desktop Demo</span><button id="menu-lock">Lock session</button></div>
+    <div class="menu-bottom"><span>AMH-OS 0.3.0</span><button id="menu-lock">Lock session</button></div>
   </div>
 </div>
 <div id="toast" class="toast"></div>

@@ -1,33 +1,41 @@
-# AMH-OS Lite
+# AMH-OS
 
-A lightweight ESP32-S3 device environment built on the official MicroPython runtime. The board runs the Python system layer and can expose a local dashboard or a USB-connected desktop demonstration.
+A MicroPython-powered ESP32-S3 device environment with a browser-rendered desktop connected over USB serial.
 
-## Current features
-- MicroPython-based ESP32-S3 system layer.
-- USB serial JSON protocol for the AMH-OS Desktop demo.
-- Browser desktop with lock screen, application launcher, dock and demo windows.
-- Read-only live hardware status over USB: device ID, runtime, free heap, uptime and CPU frequency.
-- Safe demonstration commands: help, version, sys, wifi.
-- Existing Wi-Fi dashboard and JSON API retained in the firmware package.
-- GPIO output remains disabled until the exact carrier-board pinout is verified.
+## Current development branch: `amh-os-v0.3`
 
-## USB desktop demonstration
-1. Pull the latest repository.
-2. Deploy application files: `.\tools\deploy.ps1 -Port COM16` (replace COM16 with the actual port).
-3. Start the local desktop server: `.\tools\launch-desktop.ps1`.
-4. Open `http://localhost:8765` in current Chrome or Edge.
-5. Click **Connect ESP32 over USB**, select the board's COM port and approve access.
-6. Unlock with demo PIN `1234`.
+### Desktop applications
+- Terminal with an allowlisted AMH-OS command shell.
+- File Explorer for the ESP32 filesystem: list, edit, create, rename/move, copy and delete text files, plus create and remove empty folders.
+- Task Manager with heap, storage, uptime, CPU frequency and registered AMH-OS services.
+- Settings for PIN, password or no-login convenience lock.
+- Web Browser launcher that opens pages in a new tab on the host computer.
+- Bluetooth panel for BLE discovery when the installed MicroPython firmware includes BLE support.
 
-See [USB Desktop Demo](docs/USB_DESKTOP_DEMO.md) for details.
+### Device services
+- ESP32-S3 runs MicroPython, the filesystem service, shell, resource monitor and BLE scanner.
+- USB serial uses newline-delimited JSON at 115200 baud.
+- System files such as `boot.py`, `main.py`, `config.json` and the `amh` package are protected from File Explorer mutations.
+- File preview/write/copy limits are 8 KB. Directory copy and recursive delete are not enabled.
+- GPIO outputs remain disabled until the carrier-board pinout is verified.
 
-## Foundation setup
-- Official MicroPython firmware: https://micropython.org/download/ESP32_GENERIC_S3/
-- Install tools: `py -m pip install --upgrade mpremote`
-- Run project checks: `.\tools\check.ps1`
+## Run on Windows
+1. Pull the `amh-os-v0.3` branch.
+2. Install mpremote: `py -m pip install --upgrade mpremote`.
+3. Deploy to the board: `.\tools\deploy.ps1 -Port COM16` (change the COM port if required).
+4. Start the desktop server: `.\tools\launch-desktop.ps1`.
+5. Open `http://localhost:8765` in current Chrome or Edge.
+6. Click **Connect ESP32 over USB** and select the board's serial port.
 
-## Important
-This is an embedded device environment and a desktop demonstration, not a general-purpose PC operating system. The desktop runs in the host browser; it does not replace or automatically launch over the host OS. The serial interface exposes a small read-only/allowlisted command set, not arbitrary remote execution. Deployment only copies application files; it does not erase flash or install firmware.
+The default convenience PIN is `1234`. Change it in Settings before showing the desktop.
 
-## License
-MIT.
+## Important architecture limits
+- This is an embedded device environment, not a replacement for Windows/macOS/Linux.
+- The ESP32-S3 cannot run a modern graphical web browser. AMH-OS opens websites in the host computer's browser.
+- The Task Manager reports AMH-OS services and device resource metrics, not every internal FreeRTOS task.
+- The browser login is stored on the host and is a convenience lock, not secure authentication. It does not protect the ESP32 filesystem from someone with physical USB access.
+- BLE scanning is discovery only. Direct realme Watch S2 pairing/data access is not yet implemented.
+- Do not use on a computer where USB serial access is not permitted.
+
+## Checks
+Run `.\tools\check.ps1`.

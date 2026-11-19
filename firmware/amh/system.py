@@ -12,10 +12,11 @@ START_TICKS = time.ticks_ms()
 def info():
     gc.collect()
     result = {
-        "name": "AMH-OS Lite",
-        "version": "0.1.0",
+        "name": "AMH-OS",
+        "version": "0.3.0",
         "runtime": "MicroPython",
         "free_heap": gc.mem_free(),
+        "allocated_heap": gc.mem_alloc() if hasattr(gc, "mem_alloc") else None,
         "uptime_ms": time.ticks_diff(time.ticks_ms(), START_TICKS),
     }
     if machine is not None:
