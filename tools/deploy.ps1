@@ -7,32 +7,47 @@ $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent $PSScriptRoot
 $Firmware = Join-Path $Root "firmware"
 
-Write-Host "AMH-OS Lite application deployment"
+Write-Host "AMH-OS 0.3 application deployment"
 Write-Host "Port: $Port"
-Write-Host "Copies application files only; does NOT erase flash or install firmware."
+Write-Host "Copies application files only; this does NOT erase flash or install MicroPython."
 
-if (-not (Get-Command mpremote -ErrorAction SilentlyContinue)) {
-    throw "mpremote not found. Install with: py -m pip install --upgrade mpremote"
-}
 if (-not (Test-Path (Join-Path $Firmware "main.py"))) {
     throw "Firmware application folder is incomplete."
 }
 
+$Mpremote = Get-Command mpremote -ErrorAction SilentlyContinue
+$Python = Get-Command python -ErrorAction SilentlyContinue
+$Py = Get-Command py -ErrorAction SilentlyContinue
+if (-not $Mpremote -and -not $Python -and -not $Py) {
+    throw "Python was not found. Install Python and mpremote: py -m pip install --upgrade mpremote"
+}
+
+function Invoke-Mpremote {
+    param([Parameter(ValueFromRemainingArguments = $true)][string[]]$Arguments)
+    if ($Mpremote) {
+        & $Mpremote.Source @Arguments
+    }
+    elseif ($Python) {
+        & $Python.Source -m mpremote @Arguments
+    }
+    else {
+        & $Py.Source -m mpremote @Arguments
+    }
+    if ($LASTEXITCODE -ne 0) {
+        throw "mpremote command failed: $($Arguments -join ' ')"
+    }
+}
+
 Write-Host "[1/4] Copying Python package..."
-& mpremote connect $Port fs cp -r (Join-Path $Firmware "amh") ":"
-if ($LASTEXITCODE -ne 0) { throw "Failed to copy Python package." }
+Invoke-Mpremote connect $Port fs cp -r (Join-Path $Firmware "amh") ":"
 
 Write-Host "[2/4] Copying dashboard assets..."
-& mpremote connect $Port fs cp -r (Join-Path $Firmware "web") ":"
-if ($LASTEXITCODE -ne 0) { throw "Failed to copy dashboard assets." }
+Invoke-Mpremote connect $Port fs cp -r (Join-Path $Firmware "web") ":"
 
 Write-Host "[3/4] Copying startup files..."
-& mpremote connect $Port fs cp (Join-Path $Firmware "boot.py") ":boot.py"
-if ($LASTEXITCODE -ne 0) { throw "Failed to copy boot.py." }
-& mpremote connect $Port fs cp (Join-Path $Firmware "main.py") ":main.py"
-if ($LASTEXITCODE -ne 0) { throw "Failed to copy main.py." }
+Invoke-Mpremote connect $Port fs cp (Join-Path $Firmware "boot.py") ":boot.py"
+Invoke-Mpremote connect $Port fs cp (Join-Path $Firmware "main.py") ":main.py"
 
 Write-Host "[4/4] Resetting board..."
-& mpremote connect $Port reset
-if ($LASTEXITCODE -ne 0) { Write-Warning "Reset failed; reset the board manually." }
-Write-Host "Deployment commands completed. Monitor serial at 115200 baud."
+Invoke-Mpremote connect $Port reset
+Write-Host "Deployment commands completed. USB serial protocol uses 115200 baud."
