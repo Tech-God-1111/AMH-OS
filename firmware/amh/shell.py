@@ -59,13 +59,8 @@ def run(command):
             fs_service.make_dir(_resolve(args[0]))
             return "Directory created."
         if name == "touch" and len(args) == 1:
-            path = _resolve(args[0])
-            try:
-                with open(path, "a") as handle:
-                    pass
-            except Exception:
-                fs_service.write_file(path, "")
-            return "File ready: " + path
+            result = fs_service.touch_file(_resolve(args[0]))
+            return "File ready: " + result["path"]
         if name == "write" and len(args) >= 2:
             path = _resolve(args[0])
             fs_service.write_file(path, " ".join(args[1:]))
