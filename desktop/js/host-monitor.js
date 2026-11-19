@@ -90,7 +90,7 @@
     }
   });
   const root = $("window-area");
-  if (root) observer.observe(root, { childList: true, subtree: true });
+  if (root) observer.observe(root, { childList: true });
   window.setInterval(() => {
     if ($("task-data")) refresh();
   }, 5000);
