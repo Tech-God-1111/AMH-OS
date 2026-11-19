@@ -16,7 +16,7 @@ MAX_LINE = 10000
 
 def _reply(uart, payload):
     try:
-        uart.write(json.dumps(payload) + "\n")
+        uart.write((json.dumps(payload) + "\n").encode("utf-8"))
     except Exception:
         pass
 
