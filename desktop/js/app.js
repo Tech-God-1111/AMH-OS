@@ -99,18 +99,44 @@
       if(!result.result.entries.length){list.innerHTML='<p class="muted">This directory is empty.</p>';return;}
       list.innerHTML=result.result.entries.map(item=>{
         const dir=item.type==="directory";
-        return '<div class="file-row" data-path="'+safe(item.path)+'" data-type="'+safe(item.type)+'"><span>'+ (dir?"📁":"📄") +' '+safe(item.name)+'</span><span>'+ (dir?"Folder":safe(item.size)+" B") +'</span><span><button class="tiny" data-open="'+safe(item.path)+'">'+(dir?"Open":"View")+'</button> <button class="tiny danger" data-delete="'+safe(item.path)+'" data-kind="'+(dir?"directory":"file")+'">Delete</button></span></div>';
+        return '<div class="file-row" data-path="'+safe(item.path)+'" data-type="'+safe(item.type)+'"><span>'+ (dir?"📁":"📄") +' '+safe(item.name)+'</span><span>'+ (dir?"Folder":safe(item.size)+" B") +'</span><span><button class="tiny" data-open="'+safe(item.path)+'">'+(dir?"Open":"Edit")+'</button> <button class="tiny" data-rename="'+safe(item.path)+'">Rename</button> '+(dir?"":'<button class="tiny" data-copy="'+safe(item.path)+'">Copy</button>')+' <button class="tiny danger" data-delete="'+safe(item.path)+'" data-kind="'+(dir?"directory":"file")+'">Delete</button></span></div>';
       }).join("");
-      list.querySelectorAll("[data-open]").forEach(btn=>btn.onclick=()=>openFile(btn.dataset.open));
+      list.querySelectorAll("[data-open]").forEach(btn=>btn.onclick=()=>btn.closest(".file-row").dataset.type==="directory"?loadFiles(btn.dataset.open):openFile(btn.dataset.open));
       list.querySelectorAll("[data-delete]").forEach(btn=>btn.onclick=()=>deletePath(btn.dataset.delete,btn.dataset.kind));
+      list.querySelectorAll("[data-rename]").forEach(btn=>btn.onclick=()=>renamePath(btn.dataset.rename));
+      list.querySelectorAll("[data-copy]").forEach(btn=>btn.onclick=()=>copyPath(btn.dataset.copy));
     }catch(e){list.innerHTML='<p class="error">'+safe(e.message)+'</p>';}
   }
   async function openFile(path){
     try{
       const result=await request({type:"fs",action:"read",path},"fs_result",10000);
-      const preview=$("file-preview"); if(preview)preview.textContent=result.result.content;
+      const preview=$("file-editor"); if(preview)preview.value=result.result.content;
       const title=$("file-preview-title");if(title)title.textContent=path;
+      const save=$("file-save");if(save){save.dataset.path=path;save.disabled=false;}
     }catch(e){toast(e.message);}
+  }
+  async function saveEditedFile(){
+    const button=$("file-save"), editor=$("file-editor");
+    if(!button||!editor||!button.dataset.path)return;
+    try{
+      await request({type:"fs",action:"write",path:button.dataset.path,content:editor.value},"fs_result",10000);
+      toast("Saved "+button.dataset.path);loadFiles(currentPath);
+    }catch(e){toast(e.message);}
+  }
+  async function renamePath(path){
+    const oldName=path.split("/").pop(), next=prompt("Rename to:",oldName);
+    if(!next||next===oldName)return;
+    const parent=path.slice(0,path.lastIndexOf("/"))||"/";
+    const destination=(parent==="/"?"":parent)+"/"+next;
+    try{await request({type:"fs",action:"rename",path,destination},"fs_result",10000);toast("Renamed");loadFiles(currentPath);}
+    catch(e){toast(e.message);}
+  }
+  async function copyPath(path){
+    const name=path.split("/").pop(), parent=path.slice(0,path.lastIndexOf("/"))||"/";
+    const destination=(parent==="/"?"":parent)+"/"+name+".copy";
+    if(!confirm("Create a copy named "+destination+"?"))return;
+    try{await request({type:"fs",action:"copy",path,destination},"fs_result",10000);toast("File copied");loadFiles(currentPath);}
+    catch(e){toast(e.message);}
   }
   async function deletePath(path,kind){
     if(!confirm("Delete "+path+"? This cannot be undone."))return;
@@ -181,7 +207,7 @@
   const content={
     computer:()=>'<div class="stat-grid"><div class="stat"><small>DEVICE</small><strong id="device-name">AMH-OS</strong></div><div class="stat"><small>VERSION</small><strong id="device-version">0.3.0</strong></div><div class="stat"><small>RUNTIME</small><strong id="device-runtime">MicroPython</strong></div><div class="stat"><small>FREE HEAP</small><strong id="device-heap">Connect USB</strong></div></div><p>Live information from the ESP32-S3.</p>',
     monitor:()=>'<div id="task-data">Connect the ESP32, then refresh.</div><button class="primary" id="task-refresh">Refresh task manager</button>',
-    files:()=>'<div class="toolbar"><input id="file-path" value="/" aria-label="Path"><button id="file-go">Go</button><button id="file-up">Up</button><button id="file-new-file">New file</button><button id="file-new-dir">New folder</button></div><div id="file-list" class="file-list">Connect the ESP32 to browse its filesystem.</div><h3 id="file-preview-title">File preview</h3><pre id="file-preview" class="file-preview">Select a text file to preview it.</pre>',
+    files:()=>'<div class="toolbar"><input id="file-path" value="/" aria-label="Path"><button id="file-go">Go</button><button id="file-up">Up</button><button id="file-new-file">New file</button><button id="file-new-dir">New folder</button></div><div id="file-list" class="file-list">Connect the ESP32 to browse its filesystem.</div><div class="editor-head"><h3 id="file-preview-title">Text editor</h3><button id="file-save" class="primary" disabled>Save changes</button></div><textarea id="file-editor" class="file-editor" spellcheck="false" placeholder="Select a text file to edit it."></textarea>',
     terminal:()=>'<pre id="terminal-output" class="terminal">AMH-OS Terminal 0.3.0\nType help for commands.\n</pre><div class="terminal-row"><input id="terminal-command" placeholder="help, ls, cd, cat, mkdir, write, rm, ps, df"><button id="terminal-send">Run</button></div>',
     settings:()=>'<h3>Login</h3><p class="muted">Choose how this browser desktop is unlocked.</p><div class="toolbar"><select id="login-mode"><option value="pin">PIN</option><option value="password">Password</option><option value="none">No login</option></select><input id="login-secret" type="password" placeholder="New PIN or password"><button class="primary" id="login-save">Save login</button></div><p class="muted">This is a convenience lock stored in this browser, not device-level security.</p><h3>Bluetooth</h3><p>Manage BLE discovery on the ESP32-S3.</p><button id="settings-ble">Open Bluetooth</button><h3>Browser</h3><p>AMH-OS opens web pages in a new tab of the host browser.</p><button id="settings-browser">Open browser</button>',
     bluetooth:()=>'<p>ESP32-S3 Bluetooth Low Energy discovery.</p><button class="primary" id="ble-scan">Start 10-second scan</button> <button id="ble-refresh">Refresh results</button><div id="ble-data">Connect the ESP32 first.</div><p class="muted">Discovery only. Watch pairing and data access are not yet implemented.</p>',
@@ -201,7 +227,7 @@
     bind("task-refresh",refreshTasks);
     bind("file-go",()=>loadFiles($("file-path").value.trim()||"/"));
     bind("file-up",()=>{const p=currentPath.split("/").filter(Boolean);p.pop();loadFiles("/"+p.join("/"));});
-    bind("file-new-file",()=>createEntry("file"));bind("file-new-dir",()=>createEntry("directory"));
+    bind("file-new-file",()=>createEntry("file"));bind("file-new-dir",()=>createEntry("directory"));bind("file-save",saveEditedFile);
     bind("terminal-send",runCommand);
     const terminalInput=$("terminal-command");if(terminalInput)terminalInput.addEventListener("keydown",e=>{if(e.key==="Enter")runCommand();});
     bind("login-save",saveLogin);

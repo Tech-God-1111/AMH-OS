@@ -29,3 +29,9 @@
 .terminal{max-height:260px;overflow:auto}
 .window-body .error{height:auto;color:#ffaaaa}
 @media(max-width:650px){.toolbar input,.toolbar select{min-width:100%}.file-row{align-items:flex-start}}
+
+.editor-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.editor-head h3{margin:14px 0 8px}
+.file-editor{width:100%;min-height:160px;max-height:250px;resize:vertical;background:#020912;border:1px solid var(--line);border-radius:9px;padding:12px;color:#b8e5d8;font:11px 'DM Mono',monospace;white-space:pre;overflow:auto}
+.file-editor:focus{outline:1px solid var(--cyan)}
+.file-save:disabled,button:disabled{opacity:.45;cursor:not-allowed}
