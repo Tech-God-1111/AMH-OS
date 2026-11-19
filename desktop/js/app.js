@@ -57,7 +57,6 @@
   window.AMHSerial.onMessage(msg=>{
     if(msg.type==="status"){latestStatus=msg;renderStatus();}
     if(msg.type==="hello")toast(msg.name+" "+msg.version+" ready");
-    if(msg.type==="command_result")appendTerminal(msg.output);
     if(msg.type==="error")toast(msg.message||"USB communication error");
   });
   function renderStatus(){

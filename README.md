@@ -6,7 +6,7 @@ A MicroPython-powered ESP32-S3 device environment with a browser-rendered deskto
 
 ### Desktop applications
 - Terminal with an allowlisted AMH-OS command shell.
-- File Explorer for the ESP32 filesystem: list, preview, create, rename/move, copy and delete files, plus create and remove empty folders.
+- File Explorer for the ESP32 filesystem: list, edit, create, rename/move, copy and delete text files, plus create and remove empty folders.
 - Task Manager with heap, storage, uptime, CPU frequency and registered AMH-OS services.
 - Settings for PIN, password or no-login convenience lock.
 - Web Browser launcher that opens pages in a new tab on the host computer.

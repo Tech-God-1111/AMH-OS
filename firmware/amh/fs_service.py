@@ -62,7 +62,7 @@ def write_file(path, content):
     target = _path(path)
     _guard_mutation(target)
     text = str(content)
-    if len(text) > MAX_WRITE_BYTES:
+    if len(text.encode("utf-8")) > MAX_WRITE_BYTES:
         raise ValueError("Write limit is 8 KB")
     with open(target, "w") as handle:
         handle.write(text)

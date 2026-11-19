@@ -11,7 +11,7 @@ except ImportError:
     uos = None
 
 BAUDRATE = 115200
-MAX_LINE = 2048
+MAX_LINE = 10000
 
 
 def _reply(uart, payload):
