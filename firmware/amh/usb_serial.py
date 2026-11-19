@@ -1,4 +1,4 @@
-"""Safe JSON-line USB serial service for the AMH-OS desktop demo."""
+"""Safe JSON-line USB serial service for AMH-OS 0.3."""
 import gc
 import json
 import time
@@ -11,7 +11,7 @@ except ImportError:
     uos = None
 
 BAUDRATE = 115200
-MAX_LINE = 512
+MAX_LINE = 2048
 
 
 def _reply(uart, payload):
@@ -24,33 +24,60 @@ def _reply(uart, payload):
 def _handle(message):
     kind = message.get("type", "")
     if kind == "hello":
-        return {"type": "hello", "name": "AMH-OS", "version": "0.2.0",
+        return {"type": "hello", "name": "AMH-OS", "version": "0.3.0",
                 "device": "ESP32-S3", "transport": "USB Serial"}
     if kind == "ping":
         return {"type": "pong"}
     if kind == "status":
-        from amh import system, wifi
+        from amh import system, wifi, task_manager, bluetooth
         data = system.info()
         data["wifi"] = wifi.status()
+        data["tasks"] = task_manager.snapshot()
+        data["bluetooth"] = bluetooth.status()
         data["type"] = "status"
-        data["version"] = "0.2.0"
+        data["version"] = "0.3.0"
         return data
     if kind == "command":
-        command = str(message.get("command", "")).strip().lower()
-        if command in ("help", "version", "sys", "wifi"):
-            if command == "help":
-                output = "Available demo commands: help, version, sys, wifi"
-            elif command == "version":
-                output = "AMH-OS Desktop Demo 0.2.0 | MicroPython"
-            elif command == "sys":
-                from amh import system
-                output = "\n".join("%s: %s" % item for item in system.info().items())
-            else:
-                from amh import wifi
-                output = "\n".join("%s: %s" % item for item in wifi.status().items())
-            return {"type": "command_result", "command": command, "output": output}
+        from amh import shell
+        command = str(message.get("command", ""))
         return {"type": "command_result", "command": command,
-                "output": "Command not available. Type help."}
+                "output": shell.run(command)}
+    if kind == "fs":
+        from amh import fs_service
+        action = str(message.get("action", "list"))
+        path = str(message.get("path", "/"))
+        if action == "list":
+            result = fs_service.list_dir(path)
+        elif action == "read":
+            result = fs_service.read_file(path)
+        elif action == "write":
+            result = fs_service.write_file(path, message.get("content", ""))
+        elif action == "mkdir":
+            result = fs_service.make_dir(path)
+        elif action == "remove":
+            result = fs_service.remove_file(path)
+        elif action == "rmdir":
+            result = fs_service.remove_empty_dir(path)
+        elif action == "rename":
+            result = fs_service.rename_path(path, str(message.get("destination", "")))
+        elif action == "copy":
+            result = fs_service.copy_file(path, str(message.get("destination", "")))
+        else:
+            raise ValueError("Unsupported filesystem action")
+        return {"type": "fs_result", "action": action, "result": result}
+    if kind == "tasks":
+        from amh import task_manager
+        return {"type": "tasks_result", "result": task_manager.snapshot()}
+    if kind == "ble":
+        from amh import bluetooth
+        action = str(message.get("action", "status"))
+        if action == "scan":
+            result = bluetooth.start_scan(message.get("duration_ms", 8000))
+        elif action == "stop":
+            result = bluetooth.stop_scan()
+        else:
+            result = bluetooth.results()
+        return {"type": "ble_result", "action": action, "result": result}
     return {"type": "error", "message": "Unsupported request"}
 
 
@@ -58,8 +85,6 @@ def run():
     if machine is None:
         raise RuntimeError("ESP32 machine module unavailable")
     uart = machine.UART(0, baudrate=BAUDRATE, bits=8, parity=None, stop=1)
-    # UART0 is the board's CH343 USB-UART bridge. Detach the interactive REPL
-    # so the desktop can use a clean, newline-delimited JSON protocol.
     if uos is not None:
         try:
             uos.dupterm(None)
