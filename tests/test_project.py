@@ -17,6 +17,11 @@ class ProjectTests(unittest.TestCase):
             with self.subTest(path=path):
                 self.assertTrue((FW / path).is_file())
 
+    def test_dual_system_monitor_files(self):
+        self.assertTrue((ROOT / "host" / "amh_host_monitor.py").is_file())
+        self.assertTrue((ROOT / "host" / "requirements.txt").is_file())
+        self.assertTrue((ROOT / "desktop" / "js" / "host-monitor.js").is_file())
+
     def test_legacy_build_files_absent(self):
         self.assertFalse((ROOT / "Makefile").exists())
         self.assertFalse((ROOT / "third_party" / "nuttx").exists())
