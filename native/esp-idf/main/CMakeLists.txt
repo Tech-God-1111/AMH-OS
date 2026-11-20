@@ -7,6 +7,8 @@ idf_component_register(
     INCLUDE_DIRS
         "."
         "kernel"
+    EMBED_TXTFILES
+        "web/index.html"
     REQUIRES
         nvs_flash
         esp_wifi
