@@ -5,6 +5,7 @@
 #include "esp_chip_info.h"
 #include "esp_log.h"
 #include "esp_system.h"
+#include "nvs_flash.h"
 
 static const char *TAG = "AMH-BOOT";
 
@@ -22,6 +23,22 @@ void app_main(void)
              (unsigned long)esp_get_free_heap_size());
 
     ESP_ERROR_CHECK(amh_kernel_start());
+
+    /*
+     * ESP-IDF Wi-Fi uses NVS for its persistent configuration.
+     * Initialize the existing NVS partition before starting Wi-Fi.
+     * Deliberately do not erase NVS automatically: preserving existing
+     * device data is safer than silently clearing it on startup.
+     */
+    ESP_LOGI(TAG, "Initializing NVS for Wi-Fi...");
+    esp_err_t nvs_err = nvs_flash_init();
+    if (nvs_err != ESP_OK) {
+        ESP_LOGE(TAG, "NVS initialization failed: %s",
+                 esp_err_to_name(nvs_err));
+        ESP_LOGE(TAG, "Wi-Fi startup aborted; NVS was not erased.");
+        return;
+    }
+
     ESP_ERROR_CHECK(amh_wifi_start());
     ESP_ERROR_CHECK(amh_ui_start());
 
