@@ -1,11 +1,5 @@
-__pycache__/
-*.py[cod]
-.venv/
-venv/
-.env
-firmware/config.json
-*.bin
-*.elf
-*.map
-.DS_Store
-Thumbs.db
+undefined
+# ESP-IDF generated output
+native/esp-idf/build/
+native/esp-idf/sdkconfig
+native/esp-idf/sdkconfig.old
