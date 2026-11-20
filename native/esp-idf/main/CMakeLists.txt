@@ -1,0 +1,17 @@
+idf_component_register(
+    SRCS
+        "amh_main.c"
+        "amh_wifi.c"
+        "amh_ui.c"
+        "kernel/amh_kernel.c"
+    INCLUDE_DIRS
+        "."
+        "kernel"
+    REQUIRES
+        esp_wifi
+        esp_event
+        esp_netif
+        esp_http_server
+        nvs_flash
+        esp_timer
+)
