@@ -1,115 +1,64 @@
-# AMH-OS — Native ESP32-S3 Development
+# AMH-OS — Native ESP32-S3
 
-**Branch:** `native-esp32s3`  
 **Repository:** [Tech-God-1111/AMH-OS](https://github.com/Tech-God-1111/AMH-OS)  
-**Target hardware:** ESP32-S3 (16 MB flash, 8 MB embedded PSRAM)
+**Active native branch:** `native-esp32s3`  
+**Target:** ESP32-S3, 16 MB flash, 8 MB embedded PSRAM  
+**Native SDK:** ESP-IDF 5.5.6
 
-AMH-OS is an embedded operating environment being developed for the ESP32-S3. This branch is reserved for the **native ESP-IDF implementation** and its evolution toward a graphical desktop environment.
+AMH-OS is an embedded operating environment under development for ESP32-S3. The native implementation is being developed separately from the existing MicroPython firmware so that the earlier implementation remains preserved.
 
-> **Development status:** Early native firmware bring-up. The first native image has been built, flashed to the ESP32-S3, and observed booting successfully. A graphical desktop/boot screen is not implemented in this branch yet.
+## Native implementation
 
----
+The native ESP-IDF project lives in [`native/esp-idf/`](native/esp-idf/).
 
-## Branch purpose
+Current native source includes:
+- Native startup and a FreeRTOS-backed kernel monitor task.
+- ESP32-S3 Wi-Fi setup access point.
+- HTTP server running directly on the ESP32-S3.
+- Embedded AMH-OS graphical dashboard served by the board.
+- Live system status endpoint at `/api/status`.
 
-The repository's existing MicroPython-based AMH-OS is preserved on its existing branches. The `native-esp32s3` branch is the development line for a native C firmware architecture based on ESP-IDF.
+### Open the AMH-OS interface
 
-The intention is to keep the two implementations distinct while native functionality is developed and validated.
+After the native firmware has been built and flashed:
 
-- Existing MicroPython implementation: preserved on `amh-os-0.4.1-kernel` and other existing branches.
-- Native implementation: developed on `native-esp32s3`.
-- Do not assume features from the MicroPython desktop are already available in native firmware.
+1. Connect a computer to Wi-Fi **AMH-OS-SETUP**.
+2. Enter password **amhsetup**.
+3. Open **http://192.168.4.1** in a browser.
 
-## Current native milestone
+The web page is embedded in the firmware and served by the ESP32-S3. The browser is the display/input surface; it is not a separate host application. The setup AP credentials are development defaults and must be changed before wider deployment.
 
-The first native firmware milestone is **AMH-OS 0.1.0**.
+**Important:** The native UI code has been added to this branch, but this new network/UI milestone still needs to be built and tested on the physical board. Do not treat the UI as hardware-verified until that test is complete.
 
-Verified on the physical ESP32-S3:
+## Build
 
-- ESP32-S3 detected on UART `COM16`.
-- Flash identified as 16 MB.
-- ESP-IDF 5.5.6 build completed successfully.
-- Native application flashed successfully.
-- ESP-IDF bootloader loaded the application.
-- AMH-OS boot banner and `AMH-OS BOOTED` message appeared in the serial monitor.
-- Kernel foundation initialized.
-- A FreeRTOS-backed monitor task reported a periodic heap heartbeat.
-
-This is an early standalone firmware foundation, **not yet a complete independent operating system**. ESP-IDF supplies the platform support and FreeRTOS currently supplies task scheduling.
-
-## Development roadmap
-
-Work is planned in incremental, testable stages:
-
-1. **Boot manager and diagnostics** — explicit boot states, initialization results, chip/flash/memory diagnostics, and startup reporting.
-2. **Kernel foundation** — AMH-OS kernel services, lifecycle management, and structured task monitoring.
-3. **Hardware abstraction** — controlled interfaces for supported ESP32-S3 peripherals.
-4. **Storage and shell** — filesystem integration and a restricted AMH-OS command interface.
-5. **USB host communication** — a documented protocol between native firmware and the PC companion.
-6. **Graphical boot experience** — boot progress and status presented by the PC-side interface.
-7. **Desktop environment** — native-device services connected to the AMH-OS desktop UI.
-8. **Reliability and release** — recovery, validation, versioning, and deployment documentation.
-
-The roadmap is a plan, not a claim that these features are already implemented.
-
-## Graphical interface architecture
-
-The target experience is a graphical AMH-OS boot screen followed by a desktop interface on the connected PC.
-
-The ESP32-S3 does not provide a built-in HDMI display output. The planned arrangement is:
-
-- **ESP32-S3:** runs native AMH-OS firmware and hardware/kernel services.
-- **USB serial:** carries structured status and control messages between the board and PC.
-- **PC companion:** renders the graphical boot screen and desktop in a browser.
-
-The existing browser desktop is part of the repository's earlier MicroPython-oriented implementation. It must be adapted and tested against the native firmware protocol before it can be considered compatible.
-
-## Native build environment
-
-The initial native firmware was developed with:
-
-- ESP-IDF **5.5.6**
-- ESP32-S3 target
-- Xtensa ESP32-S3 toolchain supplied by ESP-IDF
-- CMake and Ninja supplied by the ESP-IDF installation
-
-For a local ESP-IDF PowerShell environment, activate the installed ESP-IDF version using its `export.ps1` script, then change into the native project directory and build with:
+Open an ESP-IDF 5.5.6 PowerShell environment, then:
 
 ```powershell
+Set-Location "native/esp-idf"
 idf.py set-target esp32s3
 idf.py build
 ```
 
-The exact native project location and source layout may evolve as the native implementation is integrated into this repository.
+Check the selected COM port before flashing. Normal application updates should not require a full-chip erase. Keep the existing full-flash backup safe.
 
-## Flashing and recovery precautions
+## Display architecture
 
-Flashing replaces firmware in the selected flash regions. Before deploying a new image:
+The ESP32-S3 development board has no built-in HDMI output. The current native graphical interface is therefore served over Wi-Fi by the board and rendered in a browser on the computer. This is a board-hosted interface, not a claim that the board has a physical HDMI desktop output.
 
-1. Confirm the connected board and serial port.
-2. Confirm the configured flash size matches the physical device.
-3. Build and inspect the firmware before deployment.
-4. Keep a verified full-flash backup in a safe location.
-5. Obtain explicit approval before any flash or erase operation.
+## Existing implementation
 
-Do **not** run `erase_flash` as a routine deployment step. A full-chip erase is not required for ordinary application updates.
+The earlier MicroPython firmware, web dashboard, and desktop prototype remain in their existing directories. They are not silently treated as native ESP-IDF components and have not been replaced by this native implementation.
 
-## Current limitations
+## Validation status
 
-- No native graphical boot screen is implemented yet.
-- No native desktop protocol has been finalized.
-- No native filesystem, shell, app launcher, or complete service manager is claimed yet.
-- The current kernel monitor is a minimal diagnostic task, not a finished scheduler or kernel subsystem.
-- Hardware support beyond the verified boot/diagnostic path must be implemented and tested separately.
+The initial native boot/kernel firmware was previously built, flashed, and observed running on the ESP32-S3. The new Wi-Fi and embedded UI source has now been added to the branch; it must pass an ESP-IDF build and a live browser test before the new milestone is called complete.
 
-## Contributing and development approach
+## Safety and recovery
 
-- Keep native implementation changes on `native-esp32s3` until they are ready for review.
-- Preserve existing MicroPython branches.
-- Prefer small, reviewable commits with clear validation notes.
-- Do not claim hardware validation unless the relevant test was actually run on the physical board.
-- Document build steps, flash layout changes, and recovery implications alongside implementation changes.
-
----
-
-**Project status:** Native ESP32-S3 bring-up successful; Stage 2 boot manager and system diagnostics are the next development milestone.
+- Preserve the existing full-flash backup.
+- Verify board and COM port before flashing.
+- Inspect build output before deployment.
+- Do not use `erase_flash` as a routine step.
+- Obtain explicit approval before any flash or erase operation.
+- Keep native development on `native-esp32s3`; preserve all other branches.
