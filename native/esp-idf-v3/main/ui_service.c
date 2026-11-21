@@ -30,7 +30,7 @@ static esp_err_t status_handler(httpd_req_t *req)
         "{\"name\":\"AMH-OS\",\"version\":\"3.0.0\",\"chip\":\"%s\","
         "\"cores\":%u,\"free_heap\":%lu,\"uptime_ms\":%llu,"
         "\"flash_bytes\":%lu,\"psram_bytes\":%lu,\"internal_free\":%lu,"
-        "\"safe_mode\":%s,\"kernel\":true}",
+        "\"safe_mode\":%s,\"storage_ready\":%s,\"kernel\":true}",
         g_amh_hw.chip_model, (unsigned)g_amh_hw.cores,
         (unsigned long)esp_get_free_heap_size(),
         (unsigned long long)(esp_timer_get_time() / 1000ULL),
