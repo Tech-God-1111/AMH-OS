@@ -48,6 +48,6 @@ The desktop, Start menu, taskbar, movable/minimizable/maximizable windows, termi
 
 Not yet implemented: safe first-time filesystem formatting/provisioning UI, full app manager, PIN/login security, router STA/AP+STA provisioning, complete OTA download/install flow, process enumeration, and a production security model. The setup AP credentials are development-only.
 
-## Flashing
+## Known limitations\n\n- The desktop runs in the laptop browser; the ESP32-S3 serves the UI and system APIs. It does not run a local Chromium browser.\n- The terminal is a restricted built-in command interpreter, not a general Windows/Linux shell.\n- The companion exposes only allowlisted Windows launch actions and is bound to localhost.\n- Desktop PIN authentication, multi-user accounts, a complete app package manager, router client mode, and a network OTA download/install client are not included in this V3.0 milestone.\n- The setup AP password is for development only. Change it before sharing or deploying the device.\n\n## Flashing
 
 Build and inspect first. Flash only after explicitly reviewing the generated partition table and binary size. Do not use `erase_flash` as a routine step. Preserve the existing full-flash backup.
