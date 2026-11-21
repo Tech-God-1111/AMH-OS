@@ -11,6 +11,7 @@ AMH-OS 3.0 combines the native desktop from `native-desktop-v1` with a modular H
 - `components/hal`: runtime chip, core, flash, PSRAM, heap, MAC, reset-reason and ESP-IDF detection.
 - `components/kernel`: timed boot stages, RTC failure counter and safe-mode restart-loop protection.
 - `main/wifi_service.c`: development AP service.
+- `main/storage_service.c`: non-destructive FAT mount and restricted file APIs.
 - `main/ui_service.c`: embedded desktop and live hardware status endpoint.
 - `main/main.c`: staged startup and OTA image validation.
 - `main/web/index.html`: desktop prototype carried forward from native-desktop-v1.
@@ -27,7 +28,7 @@ idf.py build
 idf.py size
 ```
 
-The project uses a custom 16 MB partition map with two 2 MB OTA slots. The `storage` partition is reserved for a future filesystem integration; it is not mounted by this milestone. OTA partition layout and rollback configuration are groundwork, not a complete network OTA updater.
+The project uses a custom 16 MB partition map with two 2 MB OTA slots and a FAT data partition. The storage service mounts an existing FAT volume without formatting it, and exposes bounded directory listing, text-file read/write, directory creation, and delete APIs to the desktop. A blank or invalid volume remains unavailable rather than being erased automatically; first-time filesystem provisioning is an explicit setup task. OTA partition layout and rollback configuration are groundwork, not a complete network OTA updater.
 
 ## Hardware configuration warning
 
@@ -43,9 +44,9 @@ The defaults enable octal PSRAM at 80 MHz to match the reported 8 MB embedded PS
 
 ## Desktop status and limitations
 
-The desktop, Start menu, taskbar, windows, terminal prototype, and companion launch integration are inherited from the 0.1 desktop milestone. The terminal remains a small AMH-OS command interpreter, not a general shell. File Explorer, browser, and Task Manager actions run on the paired Windows laptop through the companion.
+The desktop, Start menu, taskbar, movable/minimizable/maximizable windows, terminal prototype, and companion launch integration are inherited from the desktop milestone. The terminal remains a small AMH-OS command interpreter, not a general shell. Device File Explorer uses the ESP32 storage APIs when a valid FAT volume is mounted. Browser and Task Manager actions run on the paired Windows laptop through the companion.
 
-Not yet implemented: persistent filesystem mounting/formatting, full app manager, PIN/login security, router STA/AP+STA provisioning, complete OTA download/install flow, process enumeration, and a production security model. The setup AP credentials are development-only.
+Not yet implemented: safe first-time filesystem formatting/provisioning UI, full app manager, PIN/login security, router STA/AP+STA provisioning, complete OTA download/install flow, process enumeration, and a production security model. The setup AP credentials are development-only.
 
 ## Flashing
 
