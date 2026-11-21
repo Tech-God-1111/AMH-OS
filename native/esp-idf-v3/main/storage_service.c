@@ -150,10 +150,15 @@ static esp_err_t receive_json(httpd_req_t *req, cJSON **out)
         return ESP_ERR_INVALID_SIZE;
     char *body = calloc(1, req->content_len + 1);
     if (!body) return ESP_ERR_NO_MEM;
-    int received = httpd_req_recv(req, body, req->content_len);
-    if (received != req->content_len) {
-        free(body);
-        return ESP_FAIL;
+    size_t received_total = 0;
+    while (received_total < (size_t)req->content_len) {
+        int received = httpd_req_recv(req, body + received_total,
+                                      req->content_len - received_total);
+        if (received <= 0) {
+            free(body);
+            return ESP_FAIL;
+        }
+        received_total += (size_t)received;
     }
     *out = cJSON_Parse(body);
     free(body);
