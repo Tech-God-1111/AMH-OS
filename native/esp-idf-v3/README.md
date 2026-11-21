@@ -23,7 +23,7 @@ AMH-OS 3.0 combines the native desktop from `native-desktop-v1` with a modular H
 - Development password: `AMHOS-Setup-2026` (change before sharing the device)
 - Desktop: `http://192.168.4.1`
 - Status: `GET /api/status`
-- Files: `GET /api/files?path=/`, `GET /api/file?path=/name`, `PUT /api/file`, `POST /api/mkdir`, `DELETE /api/file?path=/name`, `POST /api/storage/format`
+- Files: `GET /api/files?path=/`, `GET /api/file?path=/name`, `PUT /api/file`, `POST /api/mkdir`, `DELETE /api/file?path=/name`, `POST /api/storage/format`, `POST /api/storage/format`
 - First-time storage provisioning: use Device File Explorer and explicitly confirm `FORMAT AMH-OS STORAGE`. This formats only the `storage` partition; it does not erase NVS or application slots.
 
 ## Build
@@ -53,7 +53,7 @@ The defaults enable octal PSRAM at 80 MHz to match the reported 8 MB embedded PS
 
 ## Desktop status and limitations
 
-The desktop, Start menu, taskbar, movable/minimizable/maximizable windows, terminal prototype, and companion launch integration are inherited from the desktop milestone. The terminal remains a small AMH-OS command interpreter, not a general shell. Device File Explorer uses the ESP32 storage APIs when a valid FAT volume is mounted. Browser and Task Manager actions run on the paired Windows laptop through the companion.
+The desktop, Start menu, taskbar, movable/minimizable/maximizable windows, terminal prototype, and companion launch integration are inherited from the desktop milestone. The terminal is an allowlisted AMH-OS command interpreter with `help`, `version`, `status`, `uptime`, `apps`, `clear`, `ls`, `cat`, `mkdir`, `rm`, and `write`; it does not expose an arbitrary shell. Device File Explorer uses the ESP32 storage APIs when a valid FAT volume is mounted and also offers a companion action to open the laptop's File Explorer. Browser and Task Manager actions run on the paired Windows laptop through the companion.
 
 Not yet implemented: full app manager, PIN/login security, router STA/AP+STA provisioning, complete OTA download/install flow, process enumeration, and a production security model. The setup AP credentials are development-only.
 
