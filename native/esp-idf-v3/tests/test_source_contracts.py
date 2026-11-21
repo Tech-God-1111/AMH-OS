@@ -31,6 +31,14 @@ class SourceContractTests(unittest.TestCase):
         self.assertNotIn("eval(", html)
         self.assertNotIn("new Function(", html)
 
+    def test_network_services_are_disabled_by_default(self):
+        kconfig = (ROOT / "main" / "Kconfig.projbuild").read_text()
+        sdkconfig = (ROOT / "sdkconfig.defaults").read_text()
+        self.assertIn("config AMH_ENABLE_WEB_DESKTOP", kconfig)
+        self.assertIn("default n", kconfig)
+        self.assertNotIn("CONFIG_AMH_ENABLE_WEB_DESKTOP=y", sdkconfig)
+        self.assertIn("CONFIG_ESP_CONSOLE_UART_BAUDRATE=115200", sdkconfig)
+
     def test_safe_mode_skips_network_and_ui_stages(self):
         main = (ROOT / "main" / "main.c").read_text()
         self.assertIn('{"wifi-ap", stage_wifi, true, true}', main)
