@@ -9,8 +9,10 @@
 #include "freertos/task.h"
 #include "hal_board.h"
 #include "kernel.h"
+#if CONFIG_AMH_ENABLE_WEB_DESKTOP
 #include "wifi_service.h"
 #include "ui_service.h"
+#endif
 #include "storage_service.h"
 
 static const char *TAG = "AMH-BOOT";
@@ -51,23 +53,30 @@ static esp_err_t stage_nvs(void)
 }
 
 static esp_err_t stage_storage(void) { return amh_storage_mount(); }
+#if CONFIG_AMH_ENABLE_WEB_DESKTOP
 static esp_err_t stage_wifi(void) { return amh_wifi_start(); }
 static esp_err_t stage_ui(void) { return amh_ui_start(); }
+#endif
 
 static const amh_boot_stage_t BOOT_STAGES[] = {
     {"hardware-detect", stage_hardware, true, false},
     {"memory-check", stage_memory, true, false},
     {"nvs-init", stage_nvs, true, true},
-    {"storage", stage_storage, false, true},
-    {"wifi-ap", stage_wifi, true, true},
-    {"desktop-http", stage_ui, true, true}
+    {"storage", stage_storage, false, true}
+#if CONFIG_AMH_ENABLE_WEB_DESKTOP
+    ,{"wifi-ap", stage_wifi, true, true}
+    ,{"desktop-http", stage_ui, true, true}
+#endif
 };
 
 void app_main(void)
 {
     ESP_LOGI(TAG, "========================================");
     ESP_LOGI(TAG, "          AMH-OS NATIVE 3.0.0");
-    ESP_LOGI(TAG, "     ESP32-S3 desktop + kernel services");
+    ESP_LOGI(TAG, "     ESP32-S3 kernel + hardware services");
+#if !CONFIG_AMH_ENABLE_WEB_DESKTOP
+    ESP_LOGI(TAG, "Wi-Fi/HTTP desktop disabled by default; UART console is active.");
+#endif
     ESP_LOGI(TAG, "========================================");
 
     esp_err_t err = amh_kernel_boot(BOOT_STAGES,
