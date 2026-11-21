@@ -7,7 +7,7 @@
 
 static const char *TAG = "AMH-WIFI";
 #define AMH_AP_SSID "AMH-OS-SETUP"
-#define AMH_AP_PASSWORD "amhsetup"
+#define AMH_AP_PASSWORD "AMHOS-Setup-2026"
 
 esp_err_t amh_wifi_start(void)
 {
