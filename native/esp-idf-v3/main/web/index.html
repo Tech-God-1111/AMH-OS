@@ -50,7 +50,7 @@ function template(app){
  const names={system:'System Monitor',files:'File Explorer',terminal:'AMH-OS Terminal',settings:'Settings'};
  const body={
  system:'<div class="statgrid"><div class="stat"><small>FREE HEAP</small><strong id="heap">--</strong><span class="muted">bytes</span></div><div class="stat"><small>CPU CORES</small><strong id="cores">2</strong><span class="muted">ESP32-S3</span></div><div class="stat"><small>UPTIME</small><strong id="uptime">--</strong><span class="muted">seconds</span></div></div><div class="info">Operating system: AMH-OS Native<br>Firmware: 3.0.0<br>Kernel: Running<br>Host: ESP32-S3<br>Web interface: served by device firmware</div>',
- files:'<h2>PC File Explorer</h2><p class="muted">This opens the File Explorer on your laptop through the companion application.</p><button class="action" onclick="laptopAction(\'explorer\')">Open Windows File Explorer</button><p id="filesResult" class="notice">The ESP32 does not directly browse your laptop disk. The companion performs this approved action.</p>',
+ files:'<h2>Device File Explorer</h2><div class="settingrow"><span id="devicePath">/</span><button class="action" id="filesUp">Up</button><button class="action" id="filesRefresh">Refresh</button></div><div class="settingrow"><button class="action" id="newDeviceFile">New file</button><button class="action" id="newDeviceFolder">New folder</button></div><div id="deviceFiles" class="info">Loading device storage...</div><p id="deviceFileStatus" class="notice">Files are stored on the ESP32-S3 storage partition.</p>',
  terminal:'<div class="term"><div class="termout" id="termout">AMH-OS Terminal 3.0.0\nNative command interpreter · ESP32-S3\nType help to see available commands.\n\n</div><form class="termrow" id="termform"><span>amh&gt;</span><input id="terminput" autocomplete="off" spellcheck="false" autofocus></form></div>',
  settings:'<h2>Desktop Settings</h2><div class="settingrow"><span>Companion connection token</span><input id="tokenInput" type="password" placeholder="Paste token from laptop companion"></div><div class="settingrow"><span>Companion status</span><span id="compStatus" class="muted">Not connected</span></div><div class="settingrow"><span>Test connection</span><button class="action" onclick="testCompanion()">Connect</button></div><div class="settingrow"><span>Desktop session</span><button class="action" onclick="lockInfo()">Lock screen (coming next)</button></div><p class="notice">The companion token is stored in this browser profile. Use it only on your trusted laptop and private network. PIN-based desktop login is planned for a later milestone.</p>'
  }[app]||'<p>Application unavailable.</p>';
@@ -70,6 +70,7 @@ function launch(app){
  w.addEventListener('DOMNodeRemoved',()=>{const b=document.querySelector('[data-task="'+app+'"]');if(b)b.remove()});
  drag(w);
  if(app==='files'){setupDeviceExplorer(w)}
+ if(app==='files')setupDeviceExplorer(w);
  if(app==='terminal'){w.querySelector('#termform').onsubmit=e=>{e.preventDefault();const input=w.querySelector('#terminput'),out=w.querySelector('#termout'),cmd=input.value.trim();out.textContent+='amh> '+cmd+'\n'+runCommand(cmd)+'\n';input.value='';out.scrollTop=out.scrollHeight;};w.querySelector('#terminput').focus()}
  if(app==='settings'){w.querySelector('#tokenInput').value=companionToken}
  if(app==='system')updateStatus();
