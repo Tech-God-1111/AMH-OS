@@ -59,7 +59,6 @@ function template(app){
 function launch(app){
  $('#startmenu').classList.add('hidden');
  if(['browser','taskmgr'].includes(app)){laptopAction(app);return}
- if(app==='files'){laptopAction('explorer');return}
  if(openApps.has(app)){const w=openApps.get(app);w.classList.remove('minimized');return}
  const t=template(app),w=document.createElement('section');w.className='window';w.dataset.app=app;
  w.innerHTML='<div class="titlebar"><span class="windowtitle">'+t.name+'</span><div class="wincontrols"><button data-min>—</button><button data-max>□</button><button data-close>×</button></div></div><div class="winbody">'+t.body+'</div>';
@@ -70,9 +69,51 @@ function launch(app){
  const bar=document.createElement('button');bar.className='taskbtn';bar.textContent=t.name;bar.onclick=()=>w.classList.toggle('minimized');bar.dataset.task=app;$('#taskapps').append(bar);
  w.addEventListener('DOMNodeRemoved',()=>{const b=document.querySelector('[data-task="'+app+'"]');if(b)b.remove()});
  drag(w);
+ if(app==='files'){setupDeviceExplorer(w)}
  if(app==='terminal'){w.querySelector('#termform').onsubmit=e=>{e.preventDefault();const input=w.querySelector('#terminput'),out=w.querySelector('#termout'),cmd=input.value.trim();out.textContent+='amh> '+cmd+'\n'+runCommand(cmd)+'\n';input.value='';out.scrollTop=out.scrollHeight;};w.querySelector('#terminput').focus()}
  if(app==='settings'){w.querySelector('#tokenInput').value=companionToken}
  if(app==='system')updateStatus();
+}
+function setupDeviceExplorer(w){
+ let current='/';
+ const list=w.querySelector('#deviceFiles'), status=w.querySelector('#deviceFileStatus');
+ async function refresh(){
+  w.querySelector('#devicePath').textContent=current;
+  list.textContent='Loading...';
+  try{
+   const response=await fetch('/api/files?path='+encodeURIComponent(current),{cache:'no-store'});
+   const data=await response.json();
+   if(!response.ok)throw Error(data.hint||data.error||'Storage request failed');
+   list.replaceChildren();
+   if(!data.items.length){list.textContent='This folder is empty.';return}
+   for(const item of data.items){
+    const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid #ffffff18';
+    const name=document.createElement('button');name.className='action';name.textContent=(item.directory?'📁 ':'📄 ')+item.name;
+    name.style.cssText='flex:1;text-align:left;overflow-wrap:anywhere';
+    if(item.directory)name.onclick=()=>{current=(current==='/'?'':current)+'/'+item.name;refresh()};
+    else name.onclick=()=>openDeviceFile(current+'/'+item.name);
+    const meta=document.createElement('small');meta.className='muted';meta.textContent=item.directory?'Folder':item.size+' bytes';
+    const del=document.createElement('button');del.className='action';del.textContent='Delete';
+    del.onclick=()=>deleteDeviceFile(current+'/'+item.name,refresh);
+    row.append(name,meta,del);list.append(row);
+   }
+  }catch(error){list.textContent='Storage unavailable: '+error.message;status.textContent='Check the storage partition and filesystem provisioning.'}
+ }
+ w.querySelector('#filesRefresh').onclick=refresh;
+ w.querySelector('#filesUp').onclick=()=>{if(current!=='/'){current=current.slice(0,current.lastIndexOf('/'))||'/';refresh()}};
+ w.querySelector('#newDeviceFile').onclick=async()=>{const name=prompt('File name');if(!name)return;const content=prompt('Text content','');if(content===null)return;await saveDeviceFile((current==='/'?'':current)+'/'+name,content,refresh,status)};
+ w.querySelector('#newDeviceFolder').onclick=async()=>{const name=prompt('Folder name');if(!name)return;try{const r=await fetch('/api/mkdir',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:(current==='/'?'':current)+'/'+name})});if(!r.ok)throw Error('Could not create folder');status.textContent='Folder created';refresh()}catch(e){status.textContent=e.message}};
+ refresh();
+}
+async function saveDeviceFile(path,content,refresh,status){
+ try{const r=await fetch('/api/file',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({path,content})});if(!r.ok)throw Error('Save failed');status.textContent='File saved';refresh()}catch(e){status.textContent=e.message}
+}
+async function openDeviceFile(path){
+ try{const r=await fetch('/api/file?path='+encodeURIComponent(path));if(!r.ok)throw Error('Could not open file');const text=await r.text();const edited=prompt('Edit file: '+path,text);if(edited!==null)saveDeviceFile(path,edited,()=>{},document.querySelector('#deviceFileStatus'))}catch(e){alert(e.message)}
+}
+async function deleteDeviceFile(path,refresh){
+ if(!confirm('Delete '+path+'?'))return;
+ try{const r=await fetch('/api/file?path='+encodeURIComponent(path),{method:'DELETE'});if(!r.ok)throw Error('Delete failed');refresh()}catch(e){alert(e.message)}
 }
 function drag(w){const h=w.querySelector('.titlebar');let x=0,y=0,active=false;h.addEventListener('pointerdown',e=>{if(e.target.closest('button')||w.classList.contains('maximized'))return;active=true;x=e.clientX-w.offsetLeft;y=e.clientY-w.offsetTop;h.setPointerCapture(e.pointerId)});h.addEventListener('pointermove',e=>{if(!active)return;w.style.left=(e.clientX-x+w.offsetWidth/2)+'px';w.style.top=(e.clientY-y+w.offsetHeight/2)+'px';w.style.transform='none'});h.addEventListener('pointerup',()=>active=false)}
 async function laptopAction(action){
