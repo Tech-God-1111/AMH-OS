@@ -84,7 +84,7 @@ esp_err_t amh_kernel_boot(const amh_boot_stage_t *stages, size_t count)
         }
     }
 
-    if (!s_safe_mode) s_failed_boots = 0;
+    s_failed_boots = 0;
     s_boot_duration_ms = (uint32_t)((esp_timer_get_time() - boot_start) / 1000);
     ESP_LOGI(TAG, "Boot sequence completed in %lu ms%s",
              (unsigned long)s_boot_duration_ms, s_safe_mode ? " (safe mode)" : "");
