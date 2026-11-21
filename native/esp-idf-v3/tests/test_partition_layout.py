@@ -22,7 +22,7 @@ class PartitionLayoutTests(unittest.TestCase):
 
     def test_storage_partition_is_fat(self):
         text = (ROOT / "partitions.csv").read_text()
-        self.assertRegex(text, r"(?m)^storage\\s*,\\s*data\\s*,\\s*fat")
+        self.assertRegex(text, r"(?m)^storage\s*,\s*data\s*,\s*fat")
 
     def test_two_ota_slots_are_present(self):
         text = (ROOT / "partitions.csv").read_text()
