@@ -13,7 +13,8 @@ class SourceContractTests(unittest.TestCase):
         storage = (ROOT / "main" / "storage_service.c").read_text()
         self.assertIn(".format_if_mount_failed = false", storage)
         self.assertIn("FORMAT AMH-OS STORAGE", storage)
-        self.assertIn("esp_vfs_fat_spiflash_format_rw_wl", storage)
+        self.assertIn("esp_vfs_littlefs_register", storage)
+        self.assertIn("esp_littlefs_format", storage)
 
     def test_file_api_rejects_traversal_and_backslashes(self):
         storage = (ROOT / "main" / "storage_service.c").read_text()
