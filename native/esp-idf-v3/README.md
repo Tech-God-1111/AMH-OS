@@ -47,8 +47,8 @@ The defaults enable octal PSRAM at 80 MHz to match the reported 8 MB embedded PS
 
 - NVS initialization never automatically erases stored data.
 - Critical boot failures trigger controlled retries only until the safe-mode threshold.
-- In safe mode, another critical failure is logged and the device remains in a recovery wait instead of entering an endless reboot loop.
-- OTA image validation occurs only after all declared boot stages complete.
+- In safe mode, optional storage, Wi-Fi and desktop services are skipped; the device remains in a recovery wait instead of entering an endless reboot loop. A successful safe-mode session clears the failure counter so a later manual reboot can retry normal startup.
+- OTA image validation occurs only after all declared boot stages complete in normal mode; a safe-mode boot does not mark a pending OTA image valid.
 - No bootloader, partition, or flash erase operation is performed by the build scripts.
 
 ## Desktop status and limitations
