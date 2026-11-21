@@ -67,4 +67,4 @@ Not yet implemented: full app manager, PIN/login security, router STA/AP+STA pro
 
 ## Flashing
 
-Build and inspect first. Flash only after explicitly reviewing the generated partition table and binary size. Do not use `erase_flash` as a routine step. Preserve the existing full-flash backup.
+Run `scripts/verify.ps1` first. Flash only after reviewing the generated partition table and binary size, then explicitly pass `-ConfirmFlash` to `scripts/flash.ps1 -Port COM16 -ConfirmFlash`. The script refuses images larger than the 2 MB OTA slot and does not invoke `erase_flash`. Preserve the existing full-flash backup.
