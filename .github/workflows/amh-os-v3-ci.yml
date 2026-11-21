@@ -1,0 +1,57 @@
+name: AMH-OS V3.0 CI
+
+on:
+  push:
+    branches: [native-v3.0]
+    paths:
+      - "native/esp-idf-v3/**"
+      - ".github/workflows/amh-os-v3-ci.yml"
+  pull_request:
+    paths:
+      - "native/esp-idf-v3/**"
+      - ".github/workflows/amh-os-v3-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  firmware:
+    name: ESP-IDF 5.5.6 firmware build
+    runs-on: ubuntu-latest
+    container:
+      image: espressif/idf:v5.5.6
+    defaults:
+      run:
+        working-directory: native/esp-idf-v3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure target
+        run: idf.py set-target esp32s3
+      - name: Build firmware
+        run: idf.py build
+      - name: Report memory usage
+        run: idf.py size
+      - name: Upload firmware and map
+        uses: actions/upload-artifact@v4
+        with:
+          name: amh-os-v3-esp32s3-firmware
+          path: |
+            native/esp-idf-v3/build/amh_os_v3.bin
+            native/esp-idf-v3/build/amh_os_v3.elf
+            native/esp-idf-v3/build/amh_os_v3.map
+            native/esp-idf-v3/build/partition_table/partition-table.bin
+          if-no-files-found: error
+
+  static-tests:
+    name: Python and partition validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile companion
+        run: python -m py_compile native/esp-idf-v3/pc-companion/amh_companion.py
+      - name: Run tests
+        run: python -m unittest discover -s native/esp-idf-v3/tests -v
