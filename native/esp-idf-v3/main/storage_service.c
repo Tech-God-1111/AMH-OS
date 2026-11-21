@@ -226,6 +226,45 @@ static esp_err_t mkdir_handler(httpd_req_t *req)
     return httpd_resp_sendstr(req, "{\"created\":true}");
 }
 
+static esp_err_t format_handler(httpd_req_t *req)
+{
+    cJSON *root = NULL;
+    esp_err_t err = receive_json(req, &root);
+    if (err != ESP_OK) {
+        httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "Confirmation required");
+        return err;
+    }
+    cJSON *confirm = cJSON_GetObjectItemCaseSensitive(root, "confirm");
+    bool approved = cJSON_IsString(confirm) &&
+        strcmp(confirm->valuestring, "FORMAT AMH-OS STORAGE") == 0;
+    cJSON_Delete(root);
+    if (!approved) {
+        httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "Exact format confirmation required");
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    if (s_ready) {
+        err = esp_vfs_fat_spiflash_unmount_rw_wl(AMH_FS_BASE, s_wl_handle);
+        if (err != ESP_OK) return err;
+        s_ready = false;
+        s_wl_handle = WL_INVALID_HANDLE;
+    }
+
+    err = esp_vfs_fat_spiflash_format_rw_wl(AMH_FS_BASE, AMH_FS_LABEL);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Explicit storage format failed: %s", esp_err_to_name(err));
+        httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Format failed");
+        return err;
+    }
+    err = amh_storage_mount();
+    if (err != ESP_OK) {
+        httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Formatted, but remount failed");
+        return err;
+    }
+    httpd_resp_set_type(req, "application/json");
+    return httpd_resp_sendstr(req, "{\\"formatted\\":true}");
+}
+
 static esp_err_t delete_handler(httpd_req_t *req)
 {
     if (!s_ready) return storage_unavailable(req);
@@ -255,6 +294,7 @@ esp_err_t amh_storage_register_handlers(httpd_handle_t server)
     const httpd_uri_t put = {.uri="/api/file", .method=HTTP_PUT, .handler=file_put_handler};
     const httpd_uri_t mkdir = {.uri="/api/mkdir", .method=HTTP_POST, .handler=mkdir_handler};
     const httpd_uri_t del = {.uri="/api/file", .method=HTTP_DELETE, .handler=delete_handler};
+    const httpd_uri_t format = {.uri="/api/storage/format", .method=HTTP_POST, .handler=format_handler};
     esp_err_t err = httpd_register_uri_handler(server, &list);
     if (err != ESP_OK) return err;
     err = httpd_register_uri_handler(server, &get);
@@ -263,5 +303,7 @@ esp_err_t amh_storage_register_handlers(httpd_handle_t server)
     if (err != ESP_OK) return err;
     err = httpd_register_uri_handler(server, &mkdir);
     if (err != ESP_OK) return err;
-    return httpd_register_uri_handler(server, &del);
+    err = httpd_register_uri_handler(server, &del);
+    if (err != ESP_OK) return err;
+    return httpd_register_uri_handler(server, &format);
 }
