@@ -23,7 +23,7 @@ AMH-OS 3.0 combines the native desktop from `native-desktop-v1` with a modular H
 - Development password: `AMHOS-Setup-2026` (change before sharing the device)
 - Desktop: `http://192.168.4.1`
 - Status: `GET /api/status`
-- Files: `GET /api/files?path=/`, `GET /api/file?path=/name`, `PUT /api/file`, `POST /api/mkdir`, `DELETE /api/file?path=/name`
+- Files: `GET /api/files?path=/`, `GET /api/file?path=/name`, `PUT /api/file`, `POST /api/mkdir`, `DELETE /api/file?path=/name`, `POST /api/storage/format`
 - First-time storage provisioning: use Device File Explorer and explicitly confirm `FORMAT AMH-OS STORAGE`. This formats only the `storage` partition; it does not erase NVS or application slots.
 
 ## Build
@@ -37,7 +37,7 @@ idf.py build
 idf.py size
 ```
 
-The project uses a custom 16 MB partition map with two 2 MB OTA slots and a FAT data partition. The storage service mounts an existing FAT volume without formatting it, and exposes bounded directory listing, text-file read/write, directory creation, and delete APIs to the desktop. A blank or invalid volume remains unavailable rather than being erased automatically; first-time filesystem provisioning is an explicit setup task. OTA partition layout and rollback configuration are groundwork, not a complete network OTA updater.
+The project uses a custom 16 MB partition map with two 2 MB OTA slots and a FAT data partition. The storage service mounts an existing FAT volume without formatting it, and exposes bounded directory listing, text-file read/write, directory creation, and delete APIs to the desktop. A blank or invalid volume remains unavailable rather than being erased automatically; first-time provisioning is performed only after an explicit typed confirmation in Device File Explorer. OTA partition layout and rollback configuration are groundwork, not a complete network OTA updater.
 
 ## Hardware configuration warning
 
