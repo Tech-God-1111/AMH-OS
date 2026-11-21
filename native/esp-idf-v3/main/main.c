@@ -72,7 +72,7 @@ void app_main(void)
     esp_err_t err = amh_kernel_boot(BOOT_STAGES,
         sizeof(BOOT_STAGES) / sizeof(BOOT_STAGES[0]));
 
-    if (err == ESP_OK) {
+    if (err == ESP_OK && !amh_kernel_safe_mode()) {
         const esp_partition_t *running = esp_ota_get_running_partition();
         if (running) {
             esp_err_t ota_err = esp_ota_mark_app_valid_cancel_rollback();
@@ -80,8 +80,10 @@ void app_main(void)
                 ESP_LOGW(TAG, "OTA validation note: %s", esp_err_to_name(ota_err));
         }
         ESP_LOGI(TAG, "AMH-OS 3.0 desktop is online");
+    } else if (err == ESP_OK) {
+        ESP_LOGW(TAG, "AMH-OS entered safe mode. Network and desktop services were intentionally skipped.");
     } else {
-        ESP_LOGE(TAG, "Boot did not complete (%s). Recovery loop active; no automatic data erase.",
+        ESP_LOGE(TAG, "Boot did not complete (%s). Recovery wait active; no automatic data erase.",
                  esp_err_to_name(err));
     }
 
