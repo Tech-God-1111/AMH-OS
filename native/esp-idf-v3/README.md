@@ -17,7 +17,16 @@ AMH-OS 3.0 combines the native desktop from `native-desktop-v1` with a modular H
 - `main/web/index.html`: desktop prototype carried forward from native-desktop-v1.
 - `pc-companion/amh_companion.py`: allowlisted Windows companion.
 
-## Network and storage\n\n- Setup Wi-Fi: `AMH-OS-SETUP`\n- Development password: `AMHOS-Setup-2026` (change before sharing the device)\n- Desktop: `http://192.168.4.1`\n- Status: `GET /api/status`\n- Files: `GET /api/files?path=/`, `GET /api/file?path=/name`, `PUT /api/file`, `POST /api/mkdir`, `DELETE /api/file?path=/name`\n- First-time storage provisioning: use Device File Explorer and explicitly confirm `FORMAT AMH-OS STORAGE`. This formats only the `storage` partition; it does not erase NVS or application slots.\n\n## Build
+## Network and storage
+
+- Setup Wi-Fi: `AMH-OS-SETUP`
+- Development password: `AMHOS-Setup-2026` (change before sharing the device)
+- Desktop: `http://192.168.4.1`
+- Status: `GET /api/status`
+- Files: `GET /api/files?path=/`, `GET /api/file?path=/name`, `PUT /api/file`, `POST /api/mkdir`, `DELETE /api/file?path=/name`
+- First-time storage provisioning: use Device File Explorer and explicitly confirm `FORMAT AMH-OS STORAGE`. This formats only the `storage` partition; it does not erase NVS or application slots.
+
+## Build
 
 Use the project's ESP-IDF 5.5.x environment:
 
@@ -46,8 +55,16 @@ The defaults enable octal PSRAM at 80 MHz to match the reported 8 MB embedded PS
 
 The desktop, Start menu, taskbar, movable/minimizable/maximizable windows, terminal prototype, and companion launch integration are inherited from the desktop milestone. The terminal remains a small AMH-OS command interpreter, not a general shell. Device File Explorer uses the ESP32 storage APIs when a valid FAT volume is mounted. Browser and Task Manager actions run on the paired Windows laptop through the companion.
 
-Not yet implemented: safe first-time filesystem formatting/provisioning UI, full app manager, PIN/login security, router STA/AP+STA provisioning, complete OTA download/install flow, process enumeration, and a production security model. The setup AP credentials are development-only.
+Not yet implemented: full app manager, PIN/login security, router STA/AP+STA provisioning, complete OTA download/install flow, process enumeration, and a production security model. The setup AP credentials are development-only.
 
-## Known limitations\n\n- The desktop runs in the laptop browser; the ESP32-S3 serves the UI and system APIs. It does not run a local Chromium browser.\n- The terminal is a restricted built-in command interpreter, not a general Windows/Linux shell.\n- The companion exposes only allowlisted Windows launch actions and is bound to localhost.\n- Desktop PIN authentication, multi-user accounts, a complete app package manager, router client mode, and a network OTA download/install client are not included in this V3.0 milestone.\n- The setup AP password is for development only. Change it before sharing or deploying the device.\n\n## Flashing
+## Known limitations
+
+- The desktop runs in the laptop browser; the ESP32-S3 serves the UI and system APIs. It does not run a local Chromium browser.
+- The terminal is a restricted built-in command interpreter, not a general Windows/Linux shell.
+- The companion exposes only allowlisted Windows launch actions and is bound to localhost.
+- Desktop PIN authentication, multi-user accounts, a complete app package manager, router client mode, and a network OTA download/install client are not included in this V3.0 milestone.
+- The setup AP password is for development only. Change it before sharing or deploying the device.
+
+## Flashing
 
 Build and inspect first. Flash only after explicitly reviewing the generated partition table and binary size. Do not use `erase_flash` as a routine step. Preserve the existing full-flash backup.
