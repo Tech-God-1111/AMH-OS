@@ -272,7 +272,7 @@ static esp_err_t format_handler(httpd_req_t *req)
         return err;
     }
     httpd_resp_set_type(req, "application/json");
-    return httpd_resp_sendstr(req, "{\\"formatted\\":true}");
+    return httpd_resp_sendstr(req, "{\"formatted\":true}");
 }
 
 static esp_err_t delete_handler(httpd_req_t *req)
