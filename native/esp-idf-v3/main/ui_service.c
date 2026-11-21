@@ -35,7 +35,7 @@ static esp_err_t status_handler(httpd_req_t *req)
         (unsigned long)esp_get_free_heap_size(),
         (unsigned long long)(esp_timer_get_time() / 1000ULL),
         (unsigned long)g_amh_hw.flash_size, (unsigned long)g_amh_hw.psram_size,
-        (unsigned long)g_amh_hw.internal_free,
+        (unsigned long)heap_caps_get_free_size(MALLOC_CAP_INTERNAL),
         amh_kernel_safe_mode() ? "true" : "false",
         amh_storage_ready() ? "true" : "false");
     if (n < 0 || n >= sizeof(body)) return ESP_FAIL;
