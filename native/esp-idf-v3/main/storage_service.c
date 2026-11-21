@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <unistd.h>
 #include "cJSON.h"
 #include "esp_log.h"
 #include "esp_vfs_fat.h"
