@@ -195,7 +195,8 @@ static esp_err_t file_put_handler(httpd_req_t *req)
     }
     size_t length = strlen(content->valuestring);
     size_t written = fwrite(content->valuestring, 1, length, file);
-    bool ok = written == length && fclose(file) == 0;
+    int close_result = fclose(file);
+    bool ok = written == length && close_result == 0;
     cJSON_Delete(root);
     if (!ok) {
         httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Write failed");
