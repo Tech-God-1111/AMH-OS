@@ -21,6 +21,15 @@ class SourceContractTests(unittest.TestCase):
         self.assertIn("strchr(relative, '\\\\')", storage)
         self.assertIn('strstr(p, "..")', storage)
 
+    def test_desktop_exposes_device_file_manager_and_safe_terminal(self):
+        html = (ROOT / "main" / "web" / "index.html").read_text()
+        for command in ("help", "version", "status", "uptime", "apps", "clear", "ls", "cat", "mkdir", "rm", "write"):
+            self.assertIn("cmd==='" + command + "'", html)
+        self.assertIn("Device File Explorer", html)
+        self.assertIn("setupDeviceExplorer(w)", html)
+        self.assertNotIn("eval(", html)
+        self.assertNotIn("new Function(", html)
+
     def test_safe_mode_skips_network_and_ui_stages(self):
         main = (ROOT / "main" / "main.c").read_text()
         self.assertIn('{"wifi-ap", stage_wifi, true, true}', main)
