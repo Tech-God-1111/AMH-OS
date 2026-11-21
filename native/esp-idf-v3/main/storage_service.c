@@ -71,7 +71,7 @@ static esp_err_t storage_unavailable(httpd_req_t *req)
 {
     httpd_resp_set_status(req, "503 Service Unavailable");
     httpd_resp_set_type(req, "application/json");
-    return httpd_resp_sendstr(req, "{\"error\":\"storage_unavailable\",\"hint\":\"Storage is not formatted or could not be mounted. No data was erased.\"}");
+    return httpd_resp_sendstr(req, "{\"formatted\":true}");
 }
 
 static esp_err_t list_handler(httpd_req_t *req)
