@@ -8,6 +8,7 @@
 #include "esp_timer.h"
 #include "hal_board.h"
 #include "kernel.h"
+#include "storage_service.h"
 
 extern const uint8_t index_html_start[] asm("_binary_index_html_start");
 extern const uint8_t index_html_end[] asm("_binary_index_html_end");
@@ -35,7 +36,8 @@ static esp_err_t status_handler(httpd_req_t *req)
         (unsigned long long)(esp_timer_get_time() / 1000ULL),
         (unsigned long)g_amh_hw.flash_size, (unsigned long)g_amh_hw.psram_size,
         (unsigned long)g_amh_hw.internal_free,
-        amh_kernel_safe_mode() ? "true" : "false");
+        amh_kernel_safe_mode() ? "true" : "false",
+        amh_storage_ready() ? "true" : "false");
     if (n < 0 || n >= sizeof(body)) return ESP_FAIL;
     httpd_resp_set_type(req, "application/json");
     httpd_resp_set_hdr(req, "Cache-Control", "no-store");
@@ -46,7 +48,7 @@ esp_err_t amh_ui_start(void)
 {
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
     config.server_port = 80;
-    config.max_uri_handlers = 8;
+    config.max_uri_handlers = 16;
     httpd_handle_t server = NULL;
     esp_err_t err = httpd_start(&server, &config);
     if (err != ESP_OK) return err;
@@ -56,6 +58,8 @@ esp_err_t amh_ui_start(void)
     err = httpd_register_uri_handler(server, &root);
     if (err != ESP_OK) return err;
     err = httpd_register_uri_handler(server, &status);
+    if (err != ESP_OK) return err;
+    err = amh_storage_register_handlers(server);
     if (err != ESP_OK) return err;
     ESP_LOGI(TAG, "Desktop web server ready at http://192.168.4.1");
     return ESP_OK;
