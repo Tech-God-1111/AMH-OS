@@ -11,7 +11,7 @@ AMH-OS 3.0 combines the native desktop from `native-desktop-v1` with a modular H
 - `components/hal`: runtime chip, core, flash, PSRAM, heap, MAC, reset-reason and ESP-IDF detection.
 - `components/kernel`: timed boot stages, RTC failure counter and safe-mode restart-loop protection.
 - `main/wifi_service.c`: development AP service.
-- `main/storage_service.c`: non-destructive FAT mount and restricted file APIs.
+- `main/storage_service.c`: non-destructive LittleFS mount and restricted file APIs.
 - `main/ui_service.c`: embedded desktop and live hardware status endpoint.
 - `main/main.c`: staged startup and OTA image validation.
 - `main/web/index.html`: desktop prototype carried forward from native-desktop-v1.
@@ -23,7 +23,7 @@ AMH-OS 3.0 combines the native desktop from `native-desktop-v1` with a modular H
 - Development password: `AMHOS-Setup-2026` (change before sharing the device)
 - Desktop: `http://192.168.4.1`
 - Status: `GET /api/status`
-- Files: `GET /api/files?path=/`, `GET /api/file?path=/name`, `PUT /api/file`, `POST /api/mkdir`, `DELETE /api/file?path=/name`, `POST /api/storage/format`, `POST /api/storage/format`
+- Files: `GET /api/files?path=/`, `GET /api/file?path=/name`, `PUT /api/file`, `POST /api/mkdir`, `DELETE /api/file?path=/name`, `POST /api/storage/format`
 - First-time storage provisioning: use Device File Explorer and explicitly confirm `FORMAT AMH-OS STORAGE`. This formats only the `storage` partition; it does not erase NVS or application slots.
 
 ## Build
@@ -37,11 +37,11 @@ idf.py build
 idf.py size
 ```
 
-The project uses a custom 16 MB partition map with two 2 MB OTA slots and a FAT data partition. The storage service mounts an existing FAT volume without formatting it, and exposes bounded directory listing, text-file read/write, directory creation, and delete APIs to the desktop. A blank or invalid volume remains unavailable rather than being erased automatically; first-time provisioning is performed only after an explicit typed confirmation in Device File Explorer. OTA partition layout and rollback configuration are groundwork, not a complete network OTA updater.
+The project uses a custom 16 MB partition map with two 2 MB OTA slots and a LittleFS data partition. The storage service mounts an existing LittleFS volume without formatting it, and exposes bounded directory listing, text-file read/write, directory creation, and delete APIs to the desktop. A blank or invalid volume remains unavailable rather than being erased automatically; first-time provisioning is performed only after an explicit typed confirmation in Device File Explorer. OTA partition layout and rollback configuration are groundwork, not a complete network OTA updater.
 
 ## Hardware configuration warning
 
-The defaults enable octal PSRAM at 80 MHz to match the reported 8 MB embedded PSRAM class of the target board. Confirm the exact module's PSRAM mode before building/flashing. The runtime HAL reports actual initialized PSRAM and flash capacity; it does not make incorrect electrical/configuration assumptions safe.
+The defaults enable octal PSRAM at 80 MHz to match the reported 8 MB embedded PSRAM class of the target board. Confirm the exact module's PSRAM mode before building/flashing. UART0 at 115200 baud is the default console; Wi-Fi/HTTP remain off unless explicitly enabled. The runtime HAL reports actual initialized PSRAM and flash capacity; it does not make incorrect electrical/configuration assumptions safe.
 
 ## Reliability behavior
 
