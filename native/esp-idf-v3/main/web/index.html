@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101827"><title>AMH-OS Desktop</title>
+<style>
+:root{color-scheme:dark;--glass:#101a2bdc;--line:#ffffff22;--text:#f4f7fb;--muted:#aebbd0;--accent:#65d6bd}
+*{box-sizing:border-box}html,body{height:100%;margin:0;overflow:hidden;font:14px "Segoe UI",Arial,sans-serif;color:var(--text)}
+body{background:radial-gradient(ellipse at 22% 20%,#25617a 0,transparent 35%),radial-gradient(ellipse at 80% 75%,#263c75 0,transparent 42%),linear-gradient(135deg,#101d31,#17243d 55%,#101827)}
+button,input{font:inherit}button{color:inherit;cursor:pointer}.desktop{height:100%;padding:24px 20px 66px;position:relative}
+.brand{position:absolute;top:22px;left:24px;font-weight:800;letter-spacing:.16em;font-size:13px;display:flex;align-items:center;gap:10px}.mark{width:30px;height:30px;border-radius:9px;background:var(--accent);color:#08251f;display:grid;place-items:center;font-weight:900;font-size:18px}
+.icons{position:absolute;top:82px;left:22px;display:grid;gap:12px}.deskicon{width:82px;border:1px solid transparent;background:transparent;border-radius:12px;padding:10px 5px;display:grid;justify-items:center;gap:6px;font-size:12px}.deskicon:hover{background:#ffffff18;border-color:#ffffff25}.glyph{font-size:29px;filter:drop-shadow(0 3px 5px #0008)}
+.center{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;text-align:center}.welcome{font-size:clamp(28px,5vw,54px);font-weight:300;letter-spacing:-.04em;text-shadow:0 5px 25px #0007}.welcome small{display:block;font-size:12px;letter-spacing:.22em;color:#d0deeb;margin-top:12px}
+.taskbar{position:absolute;bottom:0;left:0;right:0;height:54px;background:#09111dcc;border-top:1px solid #ffffff24;backdrop-filter:blur(22px);display:flex;align-items:center;padding:0 14px;gap:8px;z-index:1000}
+.startbtn,.taskbtn{height:40px;border:1px solid transparent;background:transparent;border-radius:10px;padding:0 13px}.startbtn{font-size:20px;color:var(--accent)}.startbtn:hover,.taskbtn:hover{background:#ffffff17}.taskapps{display:flex;gap:5px;flex:1}.tray{color:var(--muted);font-size:12px;display:flex;gap:16px;align-items:center;padding:0 10px}
+.startmenu{position:absolute;bottom:62px;left:14px;width:min(360px,calc(100vw - 28px));padding:18px;background:#101a2bf2;border:1px solid var(--line);border-radius:18px;box-shadow:0 20px 70px #0009;backdrop-filter:blur(25px);z-index:1100}.hidden{display:none!important}.starthead{font-weight:700;margin-bottom:12px}.appgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.appentry{border:1px solid #ffffff16;background:#ffffff09;border-radius:11px;padding:12px;text-align:left}.appentry:hover{background:#ffffff1a}.appentry b{display:block;font-size:22px;margin-bottom:5px}.startfoot{display:flex;justify-content:space-between;margin-top:15px;color:var(--muted);font-size:11px}
+.window{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:min(760px,calc(100vw - 28px));height:min(510px,calc(100vh - 100px));background:#101a2bf5;border:1px solid #ffffff30;border-radius:14px;box-shadow:0 24px 90px #0009;overflow:hidden;z-index:20;display:flex;flex-direction:column}.titlebar{height:44px;flex:none;background:#ffffff0b;border-bottom:1px solid #ffffff17;display:flex;align-items:center;justify-content:space-between;padding:0 12px;cursor:move;user-select:none}.windowtitle{font-weight:650}.wincontrols{display:flex;gap:6px}.wincontrols button{width:28px;height:27px;border:0;border-radius:7px;background:#ffffff12}.wincontrols button:last-child:hover{background:#d84b60}.winbody{padding:18px;overflow:auto;flex:1}.window.minimized{display:none}.window.maximized{inset:8px 8px 62px;width:auto;height:auto;transform:none}
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{background:#ffffff0b;border:1px solid #ffffff14;border-radius:12px;padding:14px}.stat small{color:var(--muted);letter-spacing:.12em}.stat strong{display:block;font-size:23px;margin-top:7px}.info{margin-top:14px;padding:15px;background:#ffffff08;border-radius:12px;color:var(--muted);line-height:1.8}
+.term{background:#050b12;border:1px solid #ffffff1b;border-radius:10px;padding:14px;height:100%;font:13px/1.7 Consolas,monospace;display:flex;flex-direction:column}.termout{overflow:auto;flex:1;white-space:pre-wrap;color:#c9e8db}.termrow{display:flex;gap:8px}.termrow span{color:var(--accent)}.termrow input{flex:1;min-width:0;background:transparent;color:#fff;border:0;outline:0;font:inherit}
+.settingrow{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid #ffffff17;gap:12px}.settingrow input{width:min(250px,55%);padding:9px;background:#08111f;border:1px solid #ffffff30;border-radius:8px;color:white}.action{border:1px solid #ffffff25;background:#ffffff12;padding:9px 13px;border-radius:8px}.action:hover{background:#ffffff22}.muted{color:var(--muted)}.notice{font-size:12px;color:#f4c77a;margin-top:12px;line-height:1.5}
+@media(max-width:600px){.icons{grid-template-columns:repeat(2,1fr);top:75px}.deskicon{width:72px}.center{align-items:end;padding-bottom:110px}.statgrid{grid-template-columns:1fr}.tray .net{display:none}}
+</style>
+</head>
+<body>
+<div class="desktop" id="desktop">
+ <div class="brand"><span class="mark">A</span> AMH-OS <span class="muted" style="font-weight:400;letter-spacing:0">NATIVE DESKTOP</span></div>
+ <div class="icons">
+  <button class="deskicon" data-app="system"><span class="glyph">▣</span>System</button>
+  <button class="deskicon" data-app="files"><span class="glyph">📁</span>File Explorer</button>
+  <button class="deskicon" data-app="terminal"><span class="glyph">⌘</span>Terminal</button>
+  <button class="deskicon" data-app="settings"><span class="glyph">⚙</span>Settings</button>
+  <button class="deskicon" data-app="browser"><span class="glyph">🌐</span>Web Browser</button>
+  <button class="deskicon" data-app="taskmgr"><span class="glyph">▥</span>Task Manager</button>
+ </div>
+ <div class="center"><div class="welcome">Your system. Your workspace.<small>AMH-OS · RUNNING ON ESP32-S3</small></div></div>
+ <div id="windows"></div>
+ <div class="startmenu hidden" id="startmenu"><div class="starthead">AMH-OS Applications</div><div class="appgrid">
+  <button class="appentry" data-app="system"><b>▣</b>System</button><button class="appentry" data-app="files"><b>📁</b>File Explorer</button>
+  <button class="appentry" data-app="terminal"><b>⌘</b>Terminal</button><button class="appentry" data-app="settings"><b>⚙</b>Settings</button>
+  <button class="appentry" data-app="browser"><b>🌐</b>Web Browser</button><button class="appentry" data-app="taskmgr"><b>▥</b>Task Manager</button>
+ </div><div class="startfoot"><span id="companionState">Laptop companion: not connected</span><span>AMH-OS 0.1.0</span></div></div>
+ <div class="taskbar"><button class="startbtn" id="startBtn" title="Start">◈</button><div class="taskapps" id="taskapps"></div><div class="tray"><span class="net">ESP32-S3 · ONLINE</span><span id="clock">--:--</span></div></div>
+</div>
+<script>
+const $=s=>document.querySelector(s), windows=$('#windows'), openApps=new Map();
+let companionToken=localStorage.getItem('amh_companion_token')||'';
+const companion='http://127.0.0.1:8765';
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function template(app){
+ const names={system:'System Monitor',files:'File Explorer',terminal:'AMH-OS Terminal',settings:'Settings'};
+ const body={
+ system:'<div class="statgrid"><div class="stat"><small>FREE HEAP</small><strong id="heap">--</strong><span class="muted">bytes</span></div><div class="stat"><small>CPU CORES</small><strong id="cores">2</strong><span class="muted">ESP32-S3</span></div><div class="stat"><small>UPTIME</small><strong id="uptime">--</strong><span class="muted">seconds</span></div></div><div class="info">Operating system: AMH-OS Native<br>Firmware: 0.1.0<br>Kernel: Running<br>Host: ESP32-S3<br>Web interface: served by device firmware</div>',
+ files:'<h2>PC File Explorer</h2><p class="muted">This opens the File Explorer on your laptop through the companion application.</p><button class="action" onclick="laptopAction(\'explorer\')">Open Windows File Explorer</button><p id="filesResult" class="notice">The ESP32 does not directly browse your laptop disk. The companion performs this approved action.</p>',
+ terminal:'<div class="term"><div class="termout" id="termout">AMH-OS Terminal 0.1.0\nNative command interpreter · ESP32-S3\nType help to see available commands.\n\n</div><form class="termrow" id="termform"><span>amh&gt;</span><input id="terminput" autocomplete="off" spellcheck="false" autofocus></form></div>',
+ settings:'<h2>Desktop Settings</h2><div class="settingrow"><span>Companion connection token</span><input id="tokenInput" type="password" placeholder="Paste token from laptop companion"></div><div class="settingrow"><span>Companion status</span><span id="compStatus" class="muted">Not connected</span></div><div class="settingrow"><span>Test connection</span><button class="action" onclick="testCompanion()">Connect</button></div><div class="settingrow"><span>Desktop session</span><button class="action" onclick="lockInfo()">Lock screen (coming next)</button></div><p class="notice">The companion token is stored in this browser profile. Use it only on your trusted laptop and private network. PIN-based desktop login is planned for a later milestone.</p>'
+ }[app]||'<p>Application unavailable.</p>';
+ return {name:names[app],body};
+}
+function launch(app){
+ $('#startmenu').classList.add('hidden');
+ if(['browser','taskmgr'].includes(app)){laptopAction(app);return}
+ if(app==='files'){laptopAction('explorer');return}
+ if(openApps.has(app)){const w=openApps.get(app);w.classList.remove('minimized');return}
+ const t=template(app),w=document.createElement('section');w.className='window';w.dataset.app=app;
+ w.innerHTML='<div class="titlebar"><span class="windowtitle">'+t.name+'</span><div class="wincontrols"><button data-min>—</button><button data-max>□</button><button data-close>×</button></div></div><div class="winbody">'+t.body+'</div>';
+ windows.append(w);openApps.set(app,w);
+ w.querySelector('[data-close]').onclick=()=>{w.remove();openApps.delete(app)};
+ w.querySelector('[data-min]').onclick=()=>w.classList.add('minimized');
+ w.querySelector('[data-max]').onclick=()=>w.classList.toggle('maximized');
+ const bar=document.createElement('button');bar.className='taskbtn';bar.textContent=t.name;bar.onclick=()=>w.classList.toggle('minimized');bar.dataset.task=app;$('#taskapps').append(bar);
+ w.addEventListener('DOMNodeRemoved',()=>{const b=document.querySelector('[data-task="'+app+'"]');if(b)b.remove()});
+ drag(w);
+ if(app==='terminal'){w.querySelector('#termform').onsubmit=e=>{e.preventDefault();const input=w.querySelector('#terminput'),out=w.querySelector('#termout'),cmd=input.value.trim();out.textContent+='amh> '+cmd+'\n'+runCommand(cmd)+'\n';input.value='';out.scrollTop=out.scrollHeight;};w.querySelector('#terminput').focus()}
+ if(app==='settings'){w.querySelector('#tokenInput').value=companionToken}
+ if(app==='system')updateStatus();
+}
+function drag(w){const h=w.querySelector('.titlebar');let x=0,y=0,active=false;h.addEventListener('pointerdown',e=>{if(e.target.closest('button')||w.classList.contains('maximized'))return;active=true;x=e.clientX-w.offsetLeft;y=e.clientY-w.offsetTop;h.setPointerCapture(e.pointerId)});h.addEventListener('pointermove',e=>{if(!active)return;w.style.left=(e.clientX-x+w.offsetWidth/2)+'px';w.style.top=(e.clientY-y+w.offsetHeight/2)+'px';w.style.transform='none'});h.addEventListener('pointerup',()=>active=false)}
+async function laptopAction(action){
+ if(!companionToken){alert('Open Settings and enter the companion token printed when you start amh_companion.py on your laptop.');return}
+ try{const r=await fetch(companion+'/api/launch/'+action,{method:'POST',headers:{'Authorization':'Bearer '+companionToken,'Content-Type':'application/json'}});const d=await r.json();if(!r.ok)throw Error(d.error||'Request failed');$('#companionState').textContent='Laptop companion: connected';}
+ catch(e){alert('Laptop companion unavailable: '+e.message+'\nStart amh_companion.py on your laptop, then connect it in Settings.')}
+}
+async function testCompanion(){companionToken=$('#tokenInput').value.trim();localStorage.setItem('amh_companion_token',companionToken);try{const r=await fetch(companion+'/api/health',{headers:{'Authorization':'Bearer '+companionToken}});if(!r.ok)throw Error('Authentication failed');$('#compStatus').textContent='Connected';$('#companionState').textContent='Laptop companion: connected'}catch(e){$('#compStatus').textContent='Not connected';alert('Could not connect. Check that the companion is running and the token is correct.')}}
+function lockInfo(){alert('PIN-protected login is planned for the security milestone. It is not enabled in this prototype.')}
+function runCommand(c){const p=c.split(/\s+/),cmd=(p[0]||'').toLowerCase();if(!cmd)return '';if(cmd==='help')return 'help  version  status  uptime  clear  apps\nCommands run on the AMH-OS device, not Windows.';if(cmd==='version')return 'AMH-OS Native 0.1.0 · ESP32-S3';if(cmd==='status')return 'Kernel: running\nNetwork: AMH-OS-SETUP\nHost: ESP32-S3';if(cmd==='uptime')return 'Use System Monitor for live uptime.';if(cmd==='apps')return 'System, Terminal, Settings, PC File Explorer, Web Browser, Task Manager';if(cmd==='clear'){ $('#termout').textContent='';return '';}return 'Unknown command: '+cmd+'\nType help.'}
+async function updateStatus(){try{const d=await(await fetch('/api/status',{cache:'no-store'})).json();const w=openApps.get('system');if(w){w.querySelector('#heap').textContent=(d.free_heap||0).toLocaleString();w.querySelector('#cores').textContent=d.cores;w.querySelector('#uptime').textContent=Math.floor(d.uptime_ms/1000)}}catch(e){}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-app]');if(b)launch(b.dataset.app)});
+$('#startBtn').onclick=()=>$('#startmenu').classList.toggle('hidden');
+document.addEventListener('click',e=>{if(!e.target.closest('#startmenu')&&!e.target.closest('#startBtn'))$('#startmenu').classList.add('hidden')});
+setInterval(()=>{$('#clock').textContent=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})},1000);
+setInterval(updateStatus,3000);
+</script>
+</body></html>
