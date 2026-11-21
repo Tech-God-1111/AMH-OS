@@ -8,8 +8,7 @@
 #include <unistd.h>
 #include "cJSON.h"
 #include "esp_log.h"
-#include "esp_vfs_fat.h"
-#include "wear_levelling.h"
+#include "esp_littlefs.h"
 
 #define AMH_FS_BASE "/amh"
 #define AMH_FS_LABEL "storage"
@@ -17,27 +16,33 @@
 #define AMH_FS_MAX_BODY 4096
 
 static const char *TAG = "AMH-STORAGE";
-static wl_handle_t s_wl_handle = WL_INVALID_HANDLE;
 static bool s_ready;
 
 bool amh_storage_ready(void) { return s_ready; }
 
 esp_err_t amh_storage_mount(void)
 {
-    const esp_vfs_fat_mount_config_t config = {
+    const esp_vfs_littlefs_conf_t config = {
+        .base_path = AMH_FS_BASE,
+        .partition_label = AMH_FS_LABEL,
         .format_if_mount_failed = false,
-        .max_files = 8,
-        .allocation_unit_size = 4096
+        .dont_mount = false
     };
-    esp_err_t err = esp_vfs_fat_spiflash_mount_rw_wl(
-        AMH_FS_BASE, AMH_FS_LABEL, &config, &s_wl_handle);
+    esp_err_t err = esp_vfs_littlefs_register(&config);
     if (err != ESP_OK) {
-        ESP_LOGW(TAG, "Storage not mounted (%s). No automatic formatting was performed.",
+        ESP_LOGW(TAG, "LittleFS not mounted (%s). No automatic formatting was performed.",
                  esp_err_to_name(err));
         return err;
     }
     s_ready = true;
-    ESP_LOGI(TAG, "FAT filesystem mounted at %s", AMH_FS_BASE);
+    size_t total = 0;
+    size_t used = 0;
+    if (esp_littlefs_info(AMH_FS_LABEL, &total, &used) == ESP_OK) {
+        ESP_LOGI(TAG, "LittleFS mounted at %s: %lu / %lu bytes used",
+                 AMH_FS_BASE, (unsigned long)used, (unsigned long)total);
+    } else {
+        ESP_LOGI(TAG, "LittleFS mounted at %s", AMH_FS_BASE);
+    }
     return ESP_OK;
 }
 
@@ -250,13 +255,12 @@ static esp_err_t format_handler(httpd_req_t *req)
     }
 
     if (s_ready) {
-        err = esp_vfs_fat_spiflash_unmount_rw_wl(AMH_FS_BASE, s_wl_handle);
+        err = esp_vfs_littlefs_unregister(AMH_FS_LABEL);
         if (err != ESP_OK) return err;
         s_ready = false;
-        s_wl_handle = WL_INVALID_HANDLE;
     }
 
-    err = esp_vfs_fat_spiflash_format_rw_wl(AMH_FS_BASE, AMH_FS_LABEL);
+    err = esp_littlefs_format(AMH_FS_LABEL);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Explicit storage format failed: %s", esp_err_to_name(err));
         httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Format failed");
