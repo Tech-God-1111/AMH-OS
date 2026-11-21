@@ -1,0 +1,11 @@
+menu "AMH-OS configuration"
+
+config AMH_ENABLE_WEB_DESKTOP
+    bool "Enable Wi-Fi AP and HTTP desktop"
+    default n
+    help
+        Enables the development Wi-Fi access point and HTTP desktop.
+        Disabled by default so the kernel boots through the UART console
+        without starting network services.
+
+endmenu
