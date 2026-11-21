@@ -20,6 +20,10 @@ class PartitionLayoutTests(unittest.TestCase):
             self.assertLessEqual(previous[2], current[1], f"{previous[0]} overlaps {current[0]}")
         self.assertLessEqual(max(row[2] for row in rows), 16 * 1024 * 1024)
 
+    def test_storage_partition_is_fat(self):
+        text = (ROOT / "partitions.csv").read_text()
+        self.assertRegex(text, r"(?m)^storage\\s*,\\s*data\\s*,\\s*fat")
+
     def test_two_ota_slots_are_present(self):
         text = (ROOT / "partitions.csv").read_text()
         self.assertRegex(text, r"(?m)^ota_0\s*,\s*app\s*,\s*ota_0")
