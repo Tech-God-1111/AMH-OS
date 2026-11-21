@@ -10,6 +10,7 @@
 #include "kernel.h"
 #include "wifi_service.h"
 #include "ui_service.h"
+#include "storage_service.h"
 
 static const char *TAG = "AMH-BOOT";
 amh_hw_info_t g_amh_hw;
@@ -48,15 +49,17 @@ static esp_err_t stage_nvs(void)
     return err;
 }
 
+static esp_err_t stage_storage(void) { return amh_storage_mount(); }
 static esp_err_t stage_wifi(void) { return amh_wifi_start(); }
 static esp_err_t stage_ui(void) { return amh_ui_start(); }
 
 static const amh_boot_stage_t BOOT_STAGES[] = {
     {"hardware-detect", stage_hardware, true, false},
     {"memory-check", stage_memory, true, false},
-    {"nvs-init", stage_nvs, true, false},
-    {"wifi-ap", stage_wifi, true, false},
-    {"desktop-http", stage_ui, true, false}
+    {"nvs-init", stage_nvs, true, true},
+    {"storage", stage_storage, false, true},
+    {"wifi-ap", stage_wifi, true, true},
+    {"desktop-http", stage_ui, true, true}
 };
 
 void app_main(void)
@@ -73,7 +76,7 @@ void app_main(void)
         const esp_partition_t *running = esp_ota_get_running_partition();
         if (running) {
             esp_err_t ota_err = esp_ota_mark_app_valid_cancel_rollback();
-            if (ota_err != ESP_OK && ota_err != ESP_ERR_NOT_SUPPORTED)
+            if (ota_err != ESP_OK && ota_err != ESP_ERR_NOT_SUPPORTED && ota_err != ESP_ERR_NOT_FOUND)
                 ESP_LOGW(TAG, "OTA validation note: %s", esp_err_to_name(ota_err));
         }
         ESP_LOGI(TAG, "AMH-OS 3.0 desktop is online");
