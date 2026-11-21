@@ -17,7 +17,7 @@ AMH-OS 3.0 combines the native desktop from `native-desktop-v1` with a modular H
 - `main/web/index.html`: desktop prototype carried forward from native-desktop-v1.
 - `pc-companion/amh_companion.py`: allowlisted Windows companion.
 
-## Build
+## Network and storage\n\n- Setup Wi-Fi: `AMH-OS-SETUP`\n- Development password: `AMHOS-Setup-2026` (change before sharing the device)\n- Desktop: `http://192.168.4.1`\n- Status: `GET /api/status`\n- Files: `GET /api/files?path=/`, `GET /api/file?path=/name`, `PUT /api/file`, `POST /api/mkdir`, `DELETE /api/file?path=/name`\n- First-time storage provisioning: use Device File Explorer and explicitly confirm `FORMAT AMH-OS STORAGE`. This formats only the `storage` partition; it does not erase NVS or application slots.\n\n## Build
 
 Use the project's ESP-IDF 5.5.x environment:
 
