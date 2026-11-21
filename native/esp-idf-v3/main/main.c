@@ -89,7 +89,7 @@ void app_main(void)
             if (ota_err != ESP_OK && ota_err != ESP_ERR_NOT_SUPPORTED && ota_err != ESP_ERR_NOT_FOUND)
                 ESP_LOGW(TAG, "OTA validation note: %s", esp_err_to_name(ota_err));
         }
-        ESP_LOGI(TAG, "AMH-OS 3.0 desktop is online");
+        ESP_LOGI(TAG, "AMH-OS 3.0 normal boot completed");
     } else if (err == ESP_OK) {
         ESP_LOGW(TAG, "AMH-OS entered safe mode. Network and desktop services were intentionally skipped.");
     } else {
