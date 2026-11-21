@@ -53,5 +53,16 @@ jobs:
           python-version: "3.12"
       - name: Compile companion
         run: python -m py_compile native/esp-idf-v3/pc-companion/amh_companion.py
+      - name: Check embedded desktop JavaScript syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html = Path('native/esp-idf-v3/main/web/index.html').read_text()
+          scripts = re.findall(r'<script>(.*?)</script>', html, flags=re.S)
+          assert scripts, 'No inline desktop script found'
+          Path('/tmp/amh-desktop.js').write_text('\\n'.join(scripts))
+          PY
+          node --check /tmp/amh-desktop.js
       - name: Run tests
         run: python -m unittest discover -s native/esp-idf-v3/tests -v
