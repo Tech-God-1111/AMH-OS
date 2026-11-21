@@ -17,11 +17,11 @@ esp_err_t amh_wifi_start(void)
     err = esp_event_loop_create_default();
     if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) return err;
 
-    if (!esp_netif_create_default_wifi_ap()) return ESP_FAIL;
+    if (esp_netif_create_default_wifi_ap() == NULL) return ESP_FAIL;
 
     wifi_init_config_t init = WIFI_INIT_CONFIG_DEFAULT();
     err = esp_wifi_init(&init);
-    if (err != ESP_OK && err != ESP_ERR_WIFI_INIT_STATE) return err;
+    if (err != ESP_OK) return err;
 
     wifi_config_t config = {0};
     memcpy(config.ap.ssid, AMH_AP_SSID, sizeof(AMH_AP_SSID) - 1);
@@ -32,10 +32,12 @@ esp_err_t amh_wifi_start(void)
     config.ap.authmode = WIFI_AUTH_WPA2_PSK;
     config.ap.pmf_cfg.required = false;
 
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
-    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &config));
+    err = esp_wifi_set_mode(WIFI_MODE_AP);
+    if (err != ESP_OK) return err;
+    err = esp_wifi_set_config(WIFI_IF_AP, &config);
+    if (err != ESP_OK) return err;
     err = esp_wifi_start();
-    if (err != ESP_OK && err != ESP_ERR_WIFI_NOT_STOPPED) return err;
+    if (err != ESP_OK) return err;
 
     ESP_LOGI(TAG, "AP ready: %s; browse to http://192.168.4.1", AMH_AP_SSID);
     ESP_LOGW(TAG, "Development AP credentials must be changed before public deployment");
