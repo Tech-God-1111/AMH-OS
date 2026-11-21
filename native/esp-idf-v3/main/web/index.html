@@ -32,13 +32,13 @@ button,input{font:inherit}button{color:inherit;cursor:pointer}.desktop{height:10
   <button class="deskicon" data-app="browser"><span class="glyph">🌐</span>Web Browser</button>
   <button class="deskicon" data-app="taskmgr"><span class="glyph">▥</span>Task Manager</button>
  </div>
- <div class="center"><div class="welcome">Your system. Your workspace.<small>AMH-OS · RUNNING ON ESP32-S3</small></div></div>
+ <div class="center"><div class="welcome">Your system. Your workspace.<small>AMH-OS 3.0 · RUNNING ON ESP32-S3</small></div></div>
  <div id="windows"></div>
  <div class="startmenu hidden" id="startmenu"><div class="starthead">AMH-OS Applications</div><div class="appgrid">
   <button class="appentry" data-app="system"><b>▣</b>System</button><button class="appentry" data-app="files"><b>📁</b>File Explorer</button>
   <button class="appentry" data-app="terminal"><b>⌘</b>Terminal</button><button class="appentry" data-app="settings"><b>⚙</b>Settings</button>
   <button class="appentry" data-app="browser"><b>🌐</b>Web Browser</button><button class="appentry" data-app="taskmgr"><b>▥</b>Task Manager</button>
- </div><div class="startfoot"><span id="companionState">Laptop companion: not connected</span><span>AMH-OS 0.1.0</span></div></div>
+ </div><div class="startfoot"><span id="companionState">Laptop companion: not connected</span><span>AMH-OS 3.0.0</span></div></div>
  <div class="taskbar"><button class="startbtn" id="startBtn" title="Start">◈</button><div class="taskapps" id="taskapps"></div><div class="tray"><span class="net">ESP32-S3 · ONLINE</span><span id="clock">--:--</span></div></div>
 </div>
 <script>
@@ -49,9 +49,9 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;',
 function template(app){
  const names={system:'System Monitor',files:'File Explorer',terminal:'AMH-OS Terminal',settings:'Settings'};
  const body={
- system:'<div class="statgrid"><div class="stat"><small>FREE HEAP</small><strong id="heap">--</strong><span class="muted">bytes</span></div><div class="stat"><small>CPU CORES</small><strong id="cores">2</strong><span class="muted">ESP32-S3</span></div><div class="stat"><small>UPTIME</small><strong id="uptime">--</strong><span class="muted">seconds</span></div></div><div class="info">Operating system: AMH-OS Native<br>Firmware: 0.1.0<br>Kernel: Running<br>Host: ESP32-S3<br>Web interface: served by device firmware</div>',
+ system:'<div class="statgrid"><div class="stat"><small>FREE HEAP</small><strong id="heap">--</strong><span class="muted">bytes</span></div><div class="stat"><small>CPU CORES</small><strong id="cores">2</strong><span class="muted">ESP32-S3</span></div><div class="stat"><small>UPTIME</small><strong id="uptime">--</strong><span class="muted">seconds</span></div></div><div class="info">Operating system: AMH-OS Native<br>Firmware: 3.0.0<br>Kernel: Running<br>Host: ESP32-S3<br>Web interface: served by device firmware</div>',
  files:'<h2>PC File Explorer</h2><p class="muted">This opens the File Explorer on your laptop through the companion application.</p><button class="action" onclick="laptopAction(\'explorer\')">Open Windows File Explorer</button><p id="filesResult" class="notice">The ESP32 does not directly browse your laptop disk. The companion performs this approved action.</p>',
- terminal:'<div class="term"><div class="termout" id="termout">AMH-OS Terminal 0.1.0\nNative command interpreter · ESP32-S3\nType help to see available commands.\n\n</div><form class="termrow" id="termform"><span>amh&gt;</span><input id="terminput" autocomplete="off" spellcheck="false" autofocus></form></div>',
+ terminal:'<div class="term"><div class="termout" id="termout">AMH-OS Terminal 3.0.0\nNative command interpreter · ESP32-S3\nType help to see available commands.\n\n</div><form class="termrow" id="termform"><span>amh&gt;</span><input id="terminput" autocomplete="off" spellcheck="false" autofocus></form></div>',
  settings:'<h2>Desktop Settings</h2><div class="settingrow"><span>Companion connection token</span><input id="tokenInput" type="password" placeholder="Paste token from laptop companion"></div><div class="settingrow"><span>Companion status</span><span id="compStatus" class="muted">Not connected</span></div><div class="settingrow"><span>Test connection</span><button class="action" onclick="testCompanion()">Connect</button></div><div class="settingrow"><span>Desktop session</span><button class="action" onclick="lockInfo()">Lock screen (coming next)</button></div><p class="notice">The companion token is stored in this browser profile. Use it only on your trusted laptop and private network. PIN-based desktop login is planned for a later milestone.</p>'
  }[app]||'<p>Application unavailable.</p>';
  return {name:names[app],body};
@@ -82,7 +82,7 @@ async function laptopAction(action){
 }
 async function testCompanion(){companionToken=$('#tokenInput').value.trim();localStorage.setItem('amh_companion_token',companionToken);try{const r=await fetch(companion+'/api/health',{headers:{'Authorization':'Bearer '+companionToken}});if(!r.ok)throw Error('Authentication failed');$('#compStatus').textContent='Connected';$('#companionState').textContent='Laptop companion: connected'}catch(e){$('#compStatus').textContent='Not connected';alert('Could not connect. Check that the companion is running and the token is correct.')}}
 function lockInfo(){alert('PIN-protected login is planned for the security milestone. It is not enabled in this prototype.')}
-function runCommand(c){const p=c.split(/\s+/),cmd=(p[0]||'').toLowerCase();if(!cmd)return '';if(cmd==='help')return 'help  version  status  uptime  clear  apps\nCommands run on the AMH-OS device, not Windows.';if(cmd==='version')return 'AMH-OS Native 0.1.0 · ESP32-S3';if(cmd==='status')return 'Kernel: running\nNetwork: AMH-OS-SETUP\nHost: ESP32-S3';if(cmd==='uptime')return 'Use System Monitor for live uptime.';if(cmd==='apps')return 'System, Terminal, Settings, PC File Explorer, Web Browser, Task Manager';if(cmd==='clear'){ $('#termout').textContent='';return '';}return 'Unknown command: '+cmd+'\nType help.'}
+function runCommand(c){const p=c.split(/\s+/),cmd=(p[0]||'').toLowerCase();if(!cmd)return '';if(cmd==='help')return 'help  version  status  uptime  clear  apps\nCommands run on the AMH-OS device, not Windows.';if(cmd==='version')return 'AMH-OS Native 3.0.0 · ESP32-S3';if(cmd==='status')return 'Kernel: running\nNetwork: AMH-OS-SETUP\nHost: ESP32-S3';if(cmd==='uptime')return 'Use System Monitor for live uptime.';if(cmd==='apps')return 'System, Terminal, Settings, PC File Explorer, Web Browser, Task Manager';if(cmd==='clear'){ $('#termout').textContent='';return '';}return 'Unknown command: '+cmd+'\nType help.'}
 async function updateStatus(){try{const d=await(await fetch('/api/status',{cache:'no-store'})).json();const w=openApps.get('system');if(w){w.querySelector('#heap').textContent=(d.free_heap||0).toLocaleString();w.querySelector('#cores').textContent=d.cores;w.querySelector('#uptime').textContent=Math.floor(d.uptime_ms/1000)}}catch(e){}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-app]');if(b)launch(b.dataset.app)});
 $('#startBtn').onclick=()=>$('#startmenu').classList.toggle('hidden');
